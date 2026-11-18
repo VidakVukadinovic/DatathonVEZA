@@ -1,0 +1,2 @@
+Madrid/_gtfs_extracted/stop_times.txt filter=lfs diff=lfs merge=lfs -text
+Brussels/data/netex-tec.zip filter=lfs diff=lfs merge=lfs -text

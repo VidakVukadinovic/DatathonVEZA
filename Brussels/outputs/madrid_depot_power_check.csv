@@ -1,0 +1,6 @@
+depot_name,lines,buses,mwh_day,opportunity_lines,mw_needed_night,kw_per_bus_needed,real_grid_mw,real_kw_per_bus
+Sanchinarro,57,424,109.3,6,18.8,44.3,,
+Fuencarral,44,477,96.3,0,16.6,34.8,,
+Carabanchel,55,455,93.6,0,16.1,35.4,15.0,33.0
+Entrevías,49,399,82.7,0,14.2,35.6,,
+La Elipa,29,287,65.3,0,11.2,39.0,,

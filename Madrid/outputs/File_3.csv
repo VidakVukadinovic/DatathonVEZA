@@ -1,0 +1,6 @@
+depot_name,latitude,longitude,n_lines_assigned,buses_assigned,night_energy_mwh,peak_mw_unmanaged,peak_mw_managed,connection_mw_estimate,connection_evidence,readiness_status,conversion_year
+Carabanchel,40.3721353,-3.7263656,55,455,93.583,45.5,14.855,10.0,Evidenced,Upgrade,2030
+Fuencarral,40.48201099235358,-3.682455745064785,44,477,96.308,47.7,15.287,10.611,Estimated,Upgrade,2030
+La Elipa,40.4228975,-3.6479337,29,287,65.278,28.7,10.362,20.0,Evidenced,Ready,2030
+Entrevías,40.3781526,-3.6763897,49,399,82.685,39.9,13.125,8.712,Estimated,Critical,2030
+Sanchinarro,40.4837686,-3.6462696,57,424,109.306,42.4,17.35,8.0,Evidenced,Critical,2030

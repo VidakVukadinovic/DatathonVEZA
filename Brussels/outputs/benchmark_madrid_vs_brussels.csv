@@ -1,0 +1,9 @@
+,Madrid (EMT),Brussels (STIB),Brussels / Madrid
+Bus lines (weekday),234.0,51.0,0.22
+Daily bus-km,339331.0,91639.0,0.27
+Peak vehicles in service (GTFS blocks),1937.0,616.0,0.32
+"Peak vehicles (EMT supply file, NumCCReal)",2042.0,,
+km per peak vehicle per day (blocks),175.2,148.8,0.85
+Midday vehicles as % of peak,90.8,64.3,0.71
+100% BEB energy (MWh/day),447.2,133.4,0.3
+Lines needing opportunity charging,6.0,4.0,0.67

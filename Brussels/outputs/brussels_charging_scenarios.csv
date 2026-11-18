@@ -1,0 +1,5 @@
+,MWh/day,opportunity lines,n opp,match STIB pantographs,buses on opp lines
+Base (10 confirmed artic.),133.4,"46, 53, 87, 95",4,3 of 5,79
+Winter +25%,166.7,"46, 49, 53, 64, 71, 87, 95",7,4 of 5,133
++4 likely artic.,139.4,"46, 53, 59, 65, 87, 95",6,3 of 5,116
+"+4 likely artic., winter +25%",174.3,"46, 49, 53, 59, 64, 65, 71, 80, 87, 95",10,4 of 5,189
