@@ -1,0 +1,2 @@
+city,operator,reference_date,n_bus_lines,daily_bus_km,fleet_total,ze_fleet,ze_share_pct,fleet_data_year,ze_target_year,charging_model,energy_full_bev_mwh_day,grid_co2_g_kwh,source_urls
+Helsinki,"HSL Helsinki Region Transport (bus network, whole HSL area)",2026-11-24,390,289734.6,,,,,,,376.7,,"http://dev.hsl.fi/gtfs/hsl.zip (HSL GTFS, downloaded 2026-11-18, feed version 2026-11-18 05:50:29)"

@@ -1,0 +1,11 @@
+,Madrid (EMT),Brussels (STIB),Helsinki (HSL),Helsinki / Madrid
+Bus lines (weekday),234.0,51.0,390.0,1.67
+Daily bus-km,339331.0,91639.0,289735.0,0.85
+Peak vehicles in service (GTFS blocks),1937.0,616.0,1041.0,0.54
+"Peak vehicles (EMT supply file, NumCCReal)",2042.0,,,
+km per peak vehicle per day (blocks),175.2,148.8,278.3,1.59
+Midday vehicles as % of peak,90.8,64.3,67.0,0.74
+100% BEB energy (MWh/day),447.2,133.4,376.7,0.84
+Lines needing opportunity charging,6.0,4.0,25.0,4.17
+Fleet total,2210.0,850.0,1154.0,0.52
+Zero-emission share of fleet (%),20.9,16.8,52.0,2.49

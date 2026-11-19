@@ -1,0 +1,8 @@
+,value,class,source
+ze_fleet,600,V,"https://www.hsl.fi/en/hsl/electric-buses (table, 2025; page text says ~650)"
+ze_share_pct,52.0,V,"https://www.hsl.fi/en/hsl/electric-buses (share of buses on procured services, 2025)"
+fleet_data_year,2025,V,https://www.hsl.fi/en/hsl/electric-buses
+fleet_total,1154,D,derived = ze_fleet / ze_share; replace with HSL Annual and Responsibility Report 2025
+ze_target_year,2035,V,https://www.hsl.fi/en/hsl/electric-buses ('public transport ... completely emission-free by 2035'; all modes)
+charging_model,Depot (overnight + daytime breaks) + terminus opportunity charging on some routes,V,https://www.hsl.fi/en/hsl/electric-buses
+grid_co2_g_kwh,72.8,P,"https://www.electricitymaps.com/grid-in-review-2025/finland (2025, production-based); replace with Statistics Finland table 14qt"
