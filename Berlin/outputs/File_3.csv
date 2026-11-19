@@ -1,0 +1,9 @@
+depot_name,latitude,longitude,n_lines_assigned,buses_assigned,night_energy_mwh,peak_mw_unmanaged,peak_mw_managed,connection_mw_estimate,connection_evidence,readiness_status,conversion_year
+Indira-Gandhi-Straße,52.544352,13.468636,54,319,83.73,31.9,13.29,10.0,Evidenced,Upgrade,2030
+Britz,52.452457,13.435867,10,133,51.828,13.3,8.227,10.0,Estimated,Ready,2030
+Cicerostraße,52.496088,13.295542,16,200,79.087,20.0,12.553,10.0,Estimated,Upgrade,2030
+Lichtenberg,52.520554,13.499483,11,115,37.933,11.5,6.021,10.0,Estimated,Ready,2029
+Müllerstraße,52.55047,13.351969,11,149,54.904,14.9,8.715,10.0,Estimated,Ready,2030
+Spandau,52.517926,13.1862,22,211,74.548,21.1,11.833,10.0,Estimated,Upgrade,2030
+Säntisstraße,52.422764,13.396276,28,215,68.282,21.5,10.838,10.0,Estimated,Upgrade,2030
+Treptow,52.46968,13.491946,63,230,59.296,23.0,9.412,10.0,Estimated,Ready,2030

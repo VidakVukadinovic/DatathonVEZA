@@ -1,0 +1,21 @@
+id,item,value,class,evidence,affects,test / note
+B01,Reference date,2026-11-24 (Tuesday),D,Inside the feed; no Berlin holiday; trip count equal to nearby weekdays,"Timetable, km",Re-check strikes once the day has passed.
+B02,Perimeter,"BVG agency 796, route_type 700",D,"Includes subcontracted lines and rail-replacement buses (12, 21, 27, M17, M8, U2, U6)",All,Replacement services are temporary; listed.
+B03,Trip length,haversine length of the trip shape,D,No shape_dist_traveled in the feed; stop-to-stop check below 1 as expected,Daily km,Section 4.
+B04,In-service km only,no deadheading,A,GTFS has no depot runs,"Energy, range",Same limitation as Madrid.
+B05,peak_buses,peak concurrent trips + 5-min layover,P,No supply file; block_id on 12% of trips only,"Buses, km per bus",Layover 0/10/15 in Section 8.
+B06,Fleet baseline,1532 = 277 BEV + 1255 diesel,V,BVG in Zahlen 2025; special vehicles counted as diesel (A),"File 1, File 4",278 e-buses in the Sustainability Report.
+B07,Bus type per line,"line type then size, until 72.8% of peak buses",P / A,No passenger data per line; double-deckers treated as Articulated,"Energy, strategy",Validation lines in Section 7.
+B08,Opportunity limit,2.0 x range,A,As Madrid,Strategy,1.5x / 2.5x in Section 8.
+B09,Depot positions,GTFS depot stops; 4 nearest-stop proxies,D / P,Check on a map,"Allocation, File 3",
+B10,Depot allocation,capacity-constrained nearest depot,P,No public line-to-depot table,Depot totals,Validated against the 2023 Indira-Gandhi-Straße lines (Section 9).
+B11,Depot capacities,B: buses today (enthusiast); A: BVG planned e-bus places 2022,P,"Federal evaluation p. 300; depot ""F"" excluded",Allocation,"Later sources: Treptow ~200-220, Säntisstraße ~220."
+B12,New depots open,2027,V,BVG / Senate S19/22944: April 2027,Timeline,Treptow second site 2028 not modelled separately.
+B13,Fixed parameters,1.30 / 1.85 kWh/km; 300 / 240 km; 100 kW; 7 h; 90%,V,"Brief Section 4.5, as Madrid",All energy,"Measured German values: 1.32 / 1.70 kWh/km, 85.9% charger efficiency."
+B14,Diesel consumption,0.37 / 0.50 l/km,V,Federal e-bus evaluation table 39,CO2,
+B15,Diesel CO2 factor,3.236 kg CO2e/l (WTW),V,BVG Sustainability Report 2025 p. 42,CO2,TTW 2.65 kg/l tested; boundary differs from Madrid.
+B16,Electricity CO2 factor,0.344 kg/kWh,V,"UBA, German mix 2025",CO2,Green contract (0) and 2030 path (0.254) tested.
+B17,Connection power,"10 MVA (low, base) / 13 MVA (high); IGS 10 MW evidenced",V / P,Senate h19-2626; NOW 2020,Readiness,No per-depot contract published.
+B18,S0 path,"BVG plan to 2029, then 96/yr to 85% in 2035",V / A,BVG Sustainability Report 2025 p. 39,File 4,2026/27 split 135/135 assumed.
+B19,"Fleet constant, no new diesel",1532,A,No vehicle ages published,File 4,"BVG target fleet ~1,600."
+B20,Capex unit costs,"EUR 571k / 815k per bus, EUR 103k charging per bus",D,BVG 2020-21 (federal evaluation table 25); Solaris order 2025,Capex,Depot construction and grid connections excluded.
