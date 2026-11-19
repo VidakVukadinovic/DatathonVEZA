@@ -21,6 +21,7 @@ The `Berlin/` folder has three components, like the other cities: `data/`, `outp
 | `outputs/berlin_vehicles_by_minute.csv` | Vehicles in service by minute (same format as the Brussels/Helsinki profiles). |
 | `outputs/berlin_must_haves.csv` | Team benchmark checklist (23 items): value, label and source URL per item (notebook section 10g). |
 | `outputs/berlin_depots_benchmark.csv` | Per depot: position, e-bus places, charging points, charger power/type, published connection, chargers and kVA per bus. |
+| `outputs/benchmark_berlin_madrid_brussels_helsinki.csv` | Berlin next to Madrid, Brussels and Helsinki on the team's benchmark definitions (notebook 10h); key findings in 10i. |
 | `outputs/berlin_fleet_mix_by_year.csv` | Fleet by type, 2021-2025 (BVG Zahlenspiegel / BVG in Zahlen). |
 | `outputs/fig_berlin_*.png` | Network energy map, depot diagnostic, depot load timeline, fleet transition, depots-and-lines map, fleet mix and e-bus pace, midday dip. |
 
@@ -49,6 +50,9 @@ Needs pandas, numpy, matplotlib. The extract is in the repo, so no download is n
 The brief's fixed parameters (1.30 / 1.85 kWh/km, 300 / 240 km, 100 kW, 7 h, 90%) are kept unchanged so that Berlin and Madrid are comparable.
 
 ## Key results (reference day 24 Nov 2026)
+
+Benchmark findings (notebook 10i): Berlin runs Helsinki's daily km with 0.60x Madrid's peak buses (250 km per bus per day); at noon 82% of its peak buses are in service (Madrid 91%, Helsinki 67%, Brussels 64%), so like Madrid it depends on night and terminal charging; its range issue is the articulated fleet (6 lines over 300 km as standard, 17 as articulated); its pace (18% ZE vs Helsinki 52%) follows a yearly budget.
+
 
 * 215 lines, 291,764 bus-km per day, 1,572 peak buses; 198 lines Depot, 17 Opportunity, 0 Not_feasible.
 * 100% BEV: 510 MWh per night, 81 MW with managed charging (157 MW unmanaged).
