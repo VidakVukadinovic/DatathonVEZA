@@ -1,0 +1,11 @@
+,Madrid (EMT),Brussels (STIB),London (TfL)
+Operating model,"Municipal operator owns depots, buses, chargers","Municipal operator owns depots, buses, chargers","TfL tenders routes; private operators own garages, buses, chargers, grid"
+Peak buses,"2,042",616,"7,202"
+Depots,5,5,76
+Peak buses per depot,408,123,91 (median)
+km per bus per day,166,149,167 (median route)
+"Grid needed per depot, overnight",11–19 MW,~4–8 MW,2–5 MW (IQR)
+Installed grid per e-bus,~33 kVA (Carabanchel),~95 kVA (Jacques Brel),"~42 kVA (median, 6 sites)"
+Midday charging window,None (~91% of buses out at noon),Yes (64% of peak at noon),Not measured (no timetable); many 24h routes
+Terminal charging,Line 76 only (inductive),5 heavy articulated lines,"Route 358 (450 kW), 132"
+Transition lever,Fleet orders + depot rebuilds,"Depot conversions (Marly II, Brel…)",Propulsion written into each 7-year route tender

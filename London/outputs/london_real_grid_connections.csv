@@ -1,0 +1,7 @@
+garage,code,real_kVA,e_buses,installed_kVA_per_ebus,needed_kW_per_bus (model),garage_peak_buses,kVA_per_bus_if_whole_garage_electric,source
+Waterloo,RA,2000,46,43.5,23.2,26.0,76.9,UKPN / routeone; first all-electric garage (2016)
+Walworth,WL,1000,34,29.4,36.8,147.0,6.8,"UK Power Networks: new 1,000 kVA transformer, routes C10 + P5"
+Fulwell,FW,3000,75,40.0,39.8,118.0,25.4,"Janus Architecture: new 3 MW HV supply (RATP Dev, now First)"
+Battersea,QB,5000,48,104.2,32.2,215.0,23.3,Zenobē case study: 5 MVA
+Southall,GW,500,25,20.0,36.2,115.0,4.3,Zenobē: constrained 500 kVA + 1.2 MW / 1.2 MWh battery storage
+Go-Ahead new depot (planned),,10000,200,50.0,,,,Bus & Coach Buyer: 10 MVA for 200 e-buses
