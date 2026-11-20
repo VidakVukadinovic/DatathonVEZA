@@ -1,0 +1,13 @@
+,Madrid (EMT),Berlin (BVG)
+Bus lines (weekday),234,215
+Daily bus-km,339220,291764
+Peak buses (sum of lines),2042,1572
+km per peak bus per day (median),158.4,176.6
+Articulated share of peak buses (%),3.4,72.8
+Lines needing opportunity charging,6,17
+Depots,5,8
+100% BEV night energy (MWh/day),447.2,509.6
+Managed charging power (MW),71.0,80.9
+Depots Ready / Upgrade / Critical,1/2/2,4/4/0
+Fleet total,2210,1532
+Zero-emission share of fleet (%),20.9,18.1
