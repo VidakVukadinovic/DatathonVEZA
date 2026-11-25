@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VEZA · Electrifying EMT Madrid: every bus, every depot, every kilowatt</title>
+<meta name="description" content="Can Madrid electrify its entire EMT bus fleet, and what would it actually take? An interactive investigation by Team VEZA, IE Sustainability Datathon 2026 (Kearney challenge).">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
+<style>/*__CSS__*/</style>
+</head><body>
+
+<nav class="topnav"><div class="wrap">
+ <a class="logo" href="#ch1"><i></i>VEZA</a>
+ <div class="navlinks">
+  <a href="#ch1"><span>01</span>The transition</a><a href="#ch2"><span>02</span>Depot bottleneck</a><a href="#ch3"><span>03</span>Network &amp; lines</a>
+  <a href="#ch4"><span>04</span>Four futures</a><a href="#ch5"><span>05</span>Roadmap 2038</a><a href="#ch6"><span>06</span>Other cities</a><a href="#ch7"><span>07</span>Decisions</a><a href="#methods"><span>§</span>Methods</a>
+ </div>
+ <div class="briefmenu"><button>Brief views ▾</button><div><a href="#view1"><b>(i)</b> EMT routes by charging strategy / S1 year</a><a href="#view2"><b>(ii)</b> Depots: lines, buses, MW, connection, readiness</a><a href="#view3"><b>(iii)</b> Benchmark: Madrid vs four capitals</a><a href="#view4"><b>(iv)</b> Scenarios S0 vs S1, 2026–2035</a></div></div></div><div class="progress" id="progress"></div></nav>
+
+<!-- ===================== 01 THE TRANSITION ===================== -->
+<section id="ch1" class="dark">
+ <div class="hero">
+  <div id="heroMap"><span id="view2" class="viewtag" style="position:absolute;left:16px;top:16px;z-index:4">VIEW (ii) · Depots · File 3</span>
+   <div class="maplegend"><b>Depot readiness (indicative)</b><br>
+    <span class="dot" style="background:var(--ready)"></span>Ready ≤ 1.0×<br><span class="dot" style="background:var(--upgrade)"></span>Upgrade ≤ 1.5×<br><span class="dot" style="background:var(--critical)"></span>Critical &gt; 1.5×<br>
+    <span class="dot" style="background:#9eabc6"></span>solid = Evidenced connection<br><span class="dot hatch" style="color:#9eabc6"></span>dashed, hatched = Estimated (proxy)<br>
+    <span style="color:#6f7d9b">Circle size ∝ buses assigned · lines coloured by their depot</span></div>
+  </div>
+  <aside class="hero-side">
+   <div class="kick">IE Sustainability Datathon 2026 · Kearney challenge</div>
+   <h1>Every bus.<br>Every depot.<br><em>Every kilowatt.</em></h1>
+   <p class="q">Can Madrid electrify its entire EMT bus fleet, and what would it actually take?</p>
+   <p class="open">Electrifying a fleet is not simply a matter of replacing gas buses with electric ones. Every vehicle needs somewhere to charge, and every depot needs the electricity infrastructure to support it.</p>
+   <div class="depchips" id="heroChips"></div>
+   <div class="depcard" id="depCard"></div>
+  </aside>
+ </div>
+ <div class="stats" id="heroStats"></div>
+</section>
+
+<!-- ===================== 02 DEPOT BOTTLENECK ===================== -->
+<section id="ch2" class="chapter paper">
+ <div class="wrap">
+  <div class="chno">02 · THE DEPOT BOTTLENECK</div>
+  <h2 class="head fade">The real problem is not the bus. It is the power.</h2>
+  <p class="lede fade">If all 2,042 buses needed at peak were battery-electric, EMT's five depots would have to put <b id="t2_mwh">447 MWh</b> into batteries every night. Spread over a 7-hour charging window with smart (managed) charging, that is <b id="t2_mw">71.0 MW</b>. The five depots' combined connection is an estimated <b>57.3 MW</b>.</p>
+  <div class="cols">
+   <div class="c8">
+    <div class="ctrlrow">
+     <label class="ctrl">Charging window <input type="range" id="winH" min="5" max="10" step="0.5" value="7"><output id="winO">7 h</output></label>
+     <label class="toggle"><input type="checkbox" id="estUp"> Estimated connections +50 % <span class="cls A">A</span></label>
+     <label class="toggle"><input type="checkbox" id="showUnm"> Show unmanaged peak</label>
+    </div>
+    <svg id="gauges" viewBox="0 0 860 520" role="img" aria-label="Required charging power versus grid connection per depot"></svg>
+    <p class="note">Each column: the <b>filled block</b> is the grid connection (solid = Evidenced, hatched = Estimated proxy, never a confirmed utility offer); the <b>dark bar</b> is the managed overnight charging power needed if the depot's assigned lines ran 100 % battery-electric; <b style="color:var(--critical)">red</b> = shortfall. Managed MW = night energy ÷ (window × 0.90 efficiency). Source: File 3; sensitivity per report §3.</p>
+   </div>
+   <div class="c4">
+    <div class="label">Shortfall at current settings</div>
+    <div class="bigfig red" id="shortBig">23.3</div><div style="font:700 16px Inter;margin-top:-2px">MW short across the network</div>
+    <div class="rule" style="margin:26px 0"></div>
+    <p class="quote" style="font-size:22px">An electric bus can be purchased and delivered relatively quickly. A substation, grid connection or major depot upgrade can take years.</p>
+    <p class="muted" style="font-size:15px;margin-top:18px">That is why infrastructure, not vehicle supply, sets the speed of fleet electrification. London reports 3–10 years from grid application to energisation; Brussels' Marly II depot took about four years.</p>
+    <div id="g_sel" class="panel" style="margin-top:20px"></div>
+   </div>
+  </div>
+  <p class="insight fade"><b>Sanchinarro and Entrevías are the most constrained depots.</b> Sanchinarro serves the longest lines from an 8 MW supply and would need 2.17× its connection. Entrevías' connection is not published and is an estimate. The rebuilt La Elipa, with a 20 MW planned ceiling, is the only depot with real headroom, but it reopens only in 2029. No plausible connection hypothesis tested in the report makes Sanchinarro Ready.</p>
+ </div>
+</section>
+
+<!-- ===================== 03 NETWORK & LINES ===================== -->
+<section id="ch3" class="chapter dark">
+ <div class="wrap">
+  <div class="chno">03 · THE NETWORK AND ITS LINES</div>
+  <h2 class="head fade">Not all bus lines are equally easy to electrify.</h2>
+  <p class="lede fade">We evaluated all 234 EMT lines running on Tuesday 17 November 2026. <b>228 can run all day on overnight depot charging.</b> Six cannot: their buses cover more kilometres a day than a standard battery bus is assumed to manage on one charge (300 km). They need <b>opportunity charging</b> at a terminal.</p>
+  <div class="cols">
+   <div class="c8">
+    <div class="ctrlrow" style="justify-content:space-between">
+     <div class="seg" id="lineMode"><button data-m="year" class="on">S1 electrification year</button><button data-m="strategy">Charging strategy</button><button data-m="depot">By depot</button><button data-m="priority">Priority rank</button></div>
+     <div class="depchips" id="lineChips"></div>
+    </div>
+    <div id="lineMap"><span id="view1" class="viewtag" style="position:absolute;left:16px;top:16px;z-index:4">VIEW (i) · EMT routes · File 2</span><div class="maplegend" id="lineLegend"></div></div>
+   </div>
+   <div class="c4">
+    <div class="search"><input id="lineSearch" list="lineList" placeholder="Search a line, e.g. 27, C1, 200…" autocomplete="off"><datalist id="lineList"></datalist></div>
+    <div class="panel linecard" id="lineCard"></div>
+    <div class="label" style="margin-top:22px">Top 10 electrification priorities</div>
+    <ul class="toplist" id="topList"></ul>
+   </div>
+  </div>
+  <div class="rule"></div>
+  <div class="cols">
+   <div class="c7">
+    <h3 style="font-size:26px;margin:0 0 6px;color:#fff;letter-spacing:-.02em">Why six lines need terminal charging</h3>
+    <p class="muted" style="margin:0 0 12px">Average kilometres each bus runs per day on every line. Beyond the assumed range, a bus cannot finish its day on one overnight charge.</p>
+    <div id="rangeChart" class="chart"></div>
+   </div>
+   <div class="c5">
+    <h3 style="font-size:26px;margin:0 0 6px;color:#fff;letter-spacing:-.02em">How lines are prioritised</h3>
+    <p class="muted" style="margin:0 0 16px">Depot-feasible lines come first because they need no new on-street infrastructure. Within each group, lines are ranked by a weighted score of percentile ranks:</p>
+    <div class="method"><div><div class="num">40%</div>CO₂ avoided<br><span class="muted" style="font-size:12.5px">climate impact</span></div><div><div class="num">30%</div>Passengers / day<br><span class="muted" style="font-size:12.5px">people who benefit at street level</span></div><div><div class="num">30%</div>Range headroom<br><span class="muted" style="font-size:12.5px">1 − km per bus ÷ range: low operational risk first</span></div></div>
+    <p class="note">Classification A (assumption) in the register. Range sensitivity (Rule 2): counting off-peak buses flags 23 lines, a first-to-last-span block 29 lines and +10 % deadheading 11 lines. Brussels' real vehicle blocks show only 1 of 874 exceeding 300 km, so most of these are a scheduling question rather than a charging one.</p>
+   </div>
+  </div>
+  <p class="insight fade"><b>Sequencing matters.</b> Starting with high-impact, depot-feasible lines (19, 27, C1, C2…) delivers CO₂ and street-level benefits early while the organisation learns. The six long Sanchinarro lines come last and get terminal chargers. Terminal charging removes only 0.8 % of depot energy: it is a range fix, not a grid fix.</p>
+ </div>
+</section>
+
+<!-- ===================== 04 FOUR FUTURES ===================== -->
+<section id="ch4" class="chapter dark">
+ <div class="wrap">
+  <div class="chno">04 · FOUR FUTURES FOR MADRID</div>
+  <h2 class="head fade">2030, 2033 or 2038? The future depends on the choices made today.</h2>
+  <p class="lede fade">We modelled four transitions with the same engine: the same fleet, prices, energy model, depot loads and CO₂ factors. Choose a scenario and move through the years to watch the fleet, the spending, the emissions and the depots change.</p>
+  <div id="view4" class="v4">
+   <div class="ctrlrow" style="justify-content:space-between;margin-bottom:10px"><span class="viewtag">VIEW (iv) · S0 vs S1, 2026–2035 · File 4 only</span><span class="muted" style="font-size:13px">S0 = plan-based continuation · S1 = 100 % zero-emission by 31 Dec 2030 (mandatory stress test)</span></div>
+   <div class="cols" style="gap:16px">
+    <div class="c3"><div class="chartbox"><h4>Zero-emission share (%)</h4><div id="v4a" class="chart xs"></div></div></div>
+    <div class="c3"><div class="chartbox"><h4>Fleet at year-end: BEV vs CNG</h4><div id="v4b" class="chart xs"></div></div></div>
+    <div class="c3"><div class="chartbox"><h4>Capex (M€/yr)</h4><div id="v4c" class="chart xs"></div></div></div>
+    <div class="c3"><div class="chartbox"><h4>CO₂ emitted vs avoided (kt/yr)</h4><div id="v4d" class="chart xs"></div></div></div>
+   </div>
+   <div class="supp"><b>Supplementary analysis below</b> · S2 and S3 are not part of Files 1–4: they are run on the same notebook engine (§7d-bis/ter) to answer the brief's “earliest credible year” question and to set out our recommendation.</div>
+  </div>
+  <div class="scen-sel" id="scenSel"></div>
+  <div class="yearbar"><button class="play" id="play4" title="Play">▶</button><div class="y" id="y4">2030</div><input type="range" id="yr4" min="2026" max="2038" value="2030"><div class="muted" id="y4note" style="font-size:12.5px;min-width:250px"></div></div>
+  <div class="metrics" id="metrics"></div>
+  <div class="cols">
+   <div class="c5"><div class="chartbox"><h4>The fleet, bus by bus</h4><p id="dotsCap">2,210 buses · each dot is one bus</p><canvas id="fleetDots"></canvas>
+    <div class="fleetleg"><span><span class="dot" style="background:var(--bev)"></span>Battery-electric</span><span><span class="dot" style="background:var(--h2)"></span>Hydrogen (10)</span><span><span class="dot" style="background:var(--cng)"></span>CNG</span></div></div></div>
+   <div class="c7"><div class="chartbox"><h4>Zero-emission share of the fleet</h4><p>Selected scenario highlighted · S0/S1 are modelled to 2035 (File 4)</p><div id="c4share" class="chart"></div></div></div>
+   <div class="c6"><div class="chartbox"><h4>Buses bought and retired each year</h4><p>E-buses bought vs CNG buses retired; CNG bought shown below zero</p><div id="c4fleet" class="chart s"></div></div></div>
+   <div class="c6"><div class="chartbox"><h4>Capital expenditure</h4><p>Annual capex by component (M€, constant 2025, ex-VAT) and cumulative total</p><div id="c4capex" class="chart s"></div></div></div>
+   <div class="c6"><div class="chartbox"><h4>CO₂: emitted and avoided</h4><p>Annual emissions vs the 2025-share counterfactual; cumulative avoided (kt)</p><div id="c4co2" class="chart s"></div></div></div>
+   <div class="c6"><div class="chartbox"><h4>Depot power: load ÷ connection</h4><p>Without new grid. Green ≤ 1.0× · amber ≤ 1.5× · red &gt; 1.5× · grey = La Elipa closed</p><div id="c4heat" class="chart s"></div></div></div>
+  </div>
+  <p class="quote fade" style="margin-top:60px">100 % electrification by 2030 is technically imaginable, but it is not a credible implementation plan under the financial, operational and infrastructure constraints identified in our analysis.</p>
+  <div class="fail" id="failGrid">
+   <div><div class="num">~420/yr</div><p>e-buses needed from 2027 (444, 410, 424, 390), against EMT's record of 115 in a year.</p></div>
+   <div><div class="num">€340 M</div><p>peak-year capex, against an EMT 2027 investment budget of about €167 M.</p></div>
+   <div><div class="num">23.3 MW</div><p>grid shortfall across the depots, with 3–10-year lead times to obtain new capacity.</p></div>
+   <div><div class="num">1,645</div><p>CNG buses retired early, writing off about €194 M of residual value from a fleet that is on average 6 years old.</p></div>
+   <div><div class="num">2029</div><p>La Elipa, the only depot with headroom, reopens only after works awarded in September 2026.</p></div>
+   <div><div class="num">2027</div><p>the first year a depot (Fuencarral) would exceed its connection under S1.</p></div>
+  </div>
+ </div>
+</section>
+
+<!-- ===================== 05 ROADMAP ===================== -->
+<section id="ch5" class="chapter paper">
+ <div class="wrap">
+  <div class="chno">05 · THE RECOMMENDED ROADMAP <span class="supptag">Supplementary · not in Files 1–4</span></div>
+  <h2 class="head fade">A transition that can actually be delivered.</h2>
+  <p class="lede fade">S3 lets the CNG fleet's own age set the pace. No new CNG bus is bought from 2026. Intake rises to about 150 e-buses a year from 2029, when La Elipa reopens, and every CNG bus retires near the end of its life. The last cohort, bought in 2023, leaves in 2038.</p>
+  <div class="timeline" id="timeline"><div class="tl-track"></div><div class="tl-fill" id="tlFill"></div></div>
+  <div class="cols">
+   <div class="c7">
+    <div style="display:flex;align-items:baseline;gap:18px"><div class="bigfig" id="rmYear" style="color:var(--ink)">2030</div><button class="play" id="play5" style="background:var(--ink)">▶</button><div id="rmPhase" style="font:700 15px Inter;color:var(--ink-2)"></div></div>
+    <div class="fleetbar" id="rmBar"></div>
+    <div class="rm-stats" id="rmStats"></div>
+    <div class="label" style="margin-top:28px">Depot readiness this year: no action (grey) vs with mitigations (colour) · dashed = connection limit</div>
+    <div class="mini" id="rmMini"></div>
+   </div>
+   <div class="c5">
+    <div class="label">The strategy</div>
+    <ol class="strategy"><li>Stop buying new CNG buses from 2026.</li><li>Procure about 150 e-buses a year from 2029 through multi-OEM frameworks.</li><li>Replace CNG buses in line with their lifecycle, at about 13 years on average, as EMT does today.</li><li>File grid applications in 2027, sized for the 2038 fleet, so upgrades are live by 2032.</li><li>Use smart charging everywhere, plus targeted batteries and terminal chargers at Sanchinarro.</li><li>Avoid premature retirement: CNG is the buffer if infrastructure slips.</li></ol>
+    <div class="label" style="margin-top:26px">Charging mitigations</div>
+    <ul class="mit" id="mitList">
+     <li data-y="2026,2027"><b>2026–27</b>Smart charging at all depots; grid applications for all four live depots</li>
+     <li data-y="2028"><b>2028</b>Fuencarral pinch (0.94×): cap charge power, hold deliveries</li>
+     <li data-y="2029"><b>2029</b>La Elipa reopens: Fuencarral falls to 0.69×</li>
+     <li data-y="2031"><b>2031</b>Sanchinarro: terminal chargers (≈15 % of energy) + day-charged battery (≈1 MW)</li>
+     <li data-y="2032,2033,2034"><b>2032–34</b>+5 MW each at Carabanchel, Fuencarral and Entrevías; Sanchinarro +4 MW, then +4 MW</li>
+     <li data-y="2035,2036,2037,2038"><b>Buffer</b>La Elipa keeps ≈9.6 MW headroom; if late, slow intake and keep CNG longer</li>
+    </ul>
+    <p class="note">Mitigation sizes are planning assumptions (register A37–A39), to be confirmed with EMT and the distributors.</p>
+   </div>
+  </div>
+  <div class="rule"></div>
+  <div class="cols">
+   <div class="c7"><h3 style="font-size:26px;margin:0 0 6px;letter-spacing:-.02em">The trade-off, in one picture</h3>
+    <p class="muted" style="margin:0 0 8px">CO₂ avoided over 2026–35 against the highest single year of spending. Bubble size = stranded CNG value.</p><div id="tradeoff" class="chart"></div></div>
+   <div class="c5" style="align-self:center"><p class="insight" style="margin:0"><b>S3 avoids about 425 kt of CO₂ over 2026–35, against 623 kt for S2 and 800 kt for S1.</b> In exchange, it cuts peak annual capex to about €145 M, cuts stranded value to about €62 M, and gives the grid a six-year runway: no depot needs new capacity before 2033. From 2038, it avoids about 107 kt a year.</p></div>
+  </div>
+ </div>
+</section>
+
+<!-- ===================== 06 OTHER CITIES ===================== -->
+<section id="ch6" class="chapter dark">
+ <div class="wrap">
+  <div class="chno">06 · THE WORLD AROUND MADRID</div>
+  <h2 class="head fade">What can Madrid learn from other cities?</h2>
+  <p class="lede fade">Madrid is compared with four European capitals on network size, fleet, zero-emission progress, energy and grid carbon. Perimeters and methods differ: Brussels and Helsinki are recomputed from GTFS, London and Berlin daily km are proxies from annual operated km, and Helsinki's fleet is a proxy. Read the comparisons as orders of magnitude, not league tables.</p>
+  <div id="view3" style="margin-bottom:26px"><span class="viewtag">VIEW (iii) · Benchmark · File 1</span>
+   <div class="cols" style="gap:16px;margin-top:14px"><div class="c4"><div class="chartbox"><h4>Zero-emission share of fleet</h4><p>BEV + H₂, end-2025 · target year in brackets</p><div id="v3a" class="chart xs"></div></div></div>
+    <div class="c4"><div class="chartbox"><h4>Fleet and weekday bus-km</h4><p>Size of each network (km: Madrid/Brussels/Helsinki from GTFS; London/Berlin proxies)</p><div id="v3b" class="chart xs"></div></div></div>
+    <div class="c4"><div class="chartbox"><h4>Energy for 100 % BEV vs grid carbon</h4><p>MWh/day (bars) · g CO₂/kWh (dots)</p><div id="v3c" class="chart xs"></div></div></div></div></div>
+  <div class="label">Compare any two cities</div>
+  <div class="vs"><select id="cityA"></select><div class="mid">VS</div><select id="cityB"></select></div>
+  <div class="bfly" id="bfly"></div>
+  <p class="note">Source: File 1 (fleet at end-2025 or the closest date; reference days per city). ZE = battery-electric + hydrogen only. Grid intensity: Madrid REE 2025; peers Ember 2025 (lifecycle basis, Spain = 153.6 g/kWh on that basis).</p>
+  <div class="rule"></div>
+  <div class="cases">
+   <div class="case"><div class="k">Procurement · depots</div><h4>London</h4><p>Every new bus has been zero-emission since 2021. Garages with weak connections use smart charging and on-site batteries (Southall: 500 kVA + 1.2 MWh).</p><p><b style="color:#fff">For Madrid:</b> ZE-only purchases from 2026; a day-charged battery at Sanchinarro.</p><div class="lim">Limit: TfL tenders routes to private operators who own the buses; EMT carries the capex itself.</div></div>
+   <div class="case"><div class="k">E-native depots · terminals</div><h4>Berlin</h4><p>BVG is building two ~200-bus electric depots and a small network of terminal fast chargers (line 200: 2 × 450 kW).</p><p><b style="color:#fff">For Madrid:</b> design Las Tablas as an e-native relief depot; terminal chargers only for the six long Sanchinarro lines.</p><div class="lim">Limit: Berlin rations depot grid capacity; there is no firm 100 % zero-tailpipe year.</div></div>
+   <div class="case"><div class="k">Scheduling · phasing</div><h4>Brussels</h4><p>STIB's published vehicle blocks show range is rarely binding when schedules are designed for it. STIB has moved its target from 2030 to end-2035.</p><p><b style="color:#fff">For Madrid:</b> reschedule long blocks before buying range; plan for multi-year depot projects.</p><div class="lim">Limit: a much smaller bus network (51 lines) with trams and metro carrying most demand.</div></div>
+   <div class="case"><div class="k">Tenders · clean grid</div><h4>Helsinki</h4><p>52 % zero-emission, with ZE criteria in operator tenders and a 57.5 g/kWh grid.</p><p><b style="color:#fff">For Madrid:</b> put ZE minimums in every procurement. At 108.4 g/kWh, each e-bus already cuts CO₂ by ≈87 % vs CNG.</p><div class="lim">Limit: HSL tenders operations (operators bring buses and depots); the fleet figure is a proxy.</div></div>
+  </div>
+ </div>
+</section>
+
+<!-- ===================== 07 DECISIONS ===================== -->
+<section id="ch7" class="chapter paper">
+ <div class="wrap">
+  <div class="chno">07 · THE DECISIONS THAT MATTER</div>
+  <h2 class="head fade">The transition is possible. But the conditions must be right.</h2>
+  <p class="lede fade">Four conditions decide whether Madrid reaches 100 % zero-emission in 2038, or faster. If all four are secured early and co-funding is added, the same plan accelerates towards 2033.</p>
+  <div class="conds">
+   <div class="cond"><div class="num">01</div><h4>Grid filed in 2027, live by 2032</h4><p>Applications for the four constrained depots, sized for 2038 loads. Fuencarral and Entrevías capacities are proxies: the first action is to obtain firm figures.</p></div>
+   <div class="cond"><div class="num">02</div><h4>~150 e-buses a year</h4><p>Multi-OEM procurement frameworks: 1.3× EMT's record year, a pace suppliers and workshops can plan for.</p></div>
+   <div class="cond"><div class="num">03</div><h4>La Elipa open by 2029</h4><p>20 MW and 318 places: the only depot with spare capacity, about 9.6 MW even in 2038.</p></div>
+   <div class="cond"><div class="num">04</div><h4>€110–145 M a year</h4><p>Stable funding through 2038. Peak year €145 M (2036), against €340 M under S1.</p></div>
+  </div>
+ </div>
+</section>
+<section class="chapter dark" style="padding-top:80px">
+ <div class="wrap">
+  <div class="kick" style="margin-bottom:12px">Sensitivity lab <span class="supptag">Supplementary · from the notebook's sensitivity outputs</span></div>
+  <h2 class="head" style="font-size:clamp(28px,3.2vw,44px)">Change an assumption, see what moves.</h2>
+  <p class="lede">Every control below is tied to an assumption in the report's register (V verified · D derived · P proxy · A assumption). Outputs are computed from the model's own outputs; none are new estimates.</p>
+  <div class="lab">
+   <div class="ctrls">
+    <label class="ctrl"><div class="lbl">Charging window<span><output id="sWin">7 h</output><span class="cls D">D</span></span></div><input type="range" id="sWinR" min="5" max="10" step="0.5" value="7"><div class="hint">Brief value 7 h. Shorter windows raise the power needed.</div></label>
+    <label class="ctrl"><div class="lbl">Estimated connections (Fuencarral, Entrevías)<span><output id="sEst">×1.00</output><span class="cls P">P</span></span></div><input type="range" id="sEstR" min="0.75" max="1.5" step="0.05" value="1"><div class="hint">Proxy from Carabanchel's MW per bus. Never a utility offer.</div></label>
+    <label class="ctrl"><div class="lbl">Grid reinforcement cost<span><output id="sGrid">€0.50 M/MW</output><span class="cls A">A</span></span></div><input type="range" id="sGridR" min="0.25" max="1" step="0.05" value="0.5"><div class="hint">No public EMT figure; tested €0.25–1.0 M per MW.</div></label>
+    <label class="ctrl"><div class="lbl">S3 procurement pace from 2029<span><output id="sPace">150 /yr</output><span class="cls A">A</span></span></div><input type="range" id="sPaceR" min="0" max="5" step="1" value="2"><div class="hint">Re-runs the S3 lifecycle path in the notebook engine at each pace.</div></label>
+    <label class="ctrl"><div class="lbl">La Elipa reopening<span><output id="sElipa">2029</output><span class="cls D">D</span></span></div><input type="range" id="sElipaR" min="2029" max="2031" step="1" value="2029"><div class="hint">Award 30 Sep 2026, works up to 32 months.</div></label>
+    <label class="ctrl"><div class="lbl">Depot allocation &amp; connection hypothesis</div><select id="sAlloc"></select><div class="hint">A = end state with La Elipa · B = La Elipa closed · C = nearest depot.</div></label>
+    <label class="ctrl"><div class="lbl">Range rule (deadheading, blocks)</div><select id="sRule"></select></label>
+   </div>
+   <div class="out">
+    <div class="outgrid" id="labOut1"></div>
+    <div class="cols" style="gap:20px"><div class="c6"><div class="label">Depot load ÷ connection (100 % BEV, end state)</div><div id="labDep" class="chart s"></div></div>
+     <div class="c6"><div class="label">S3 pace: what changes</div><div id="labPace" class="chart s"></div></div>
+     <div class="c6"><div class="label">Fuencarral &amp; La Elipa ratio by La Elipa reopening (S3)</div><div id="labElipa" class="chart s"></div></div>
+     <div class="c6"><div class="label">Selected readiness case (report Annex C)</div><div id="labAlloc"></div><div class="label" style="margin-top:16px">Selected range rule</div><div id="labRule"></div></div></div>
+   </div>
+  </div>
+ </div>
+</section>
+<section class="final dark" style="border-top:1px solid var(--night-line)">
+ <div class="wrap">
+  <p class="quote">Electrifying Madrid's bus fleet is not simply a vehicle replacement exercise. It is a coordinated transformation of transport operations, electricity infrastructure, public investment and fleet management.</p>
+  <p class="lede" style="margin-top:34px">Our recommendation is a lifecycle-based transition to <b style="color:var(--bev)">2038</b>, with the flexibility to accelerate if the required grid capacity, procurement and funding conditions materialise.</p>
+ </div>
+</section>
+
+<!-- ===================== METHODS ===================== -->
+<section id="methods" class="chapter paper">
+ <div class="wrap">
+  <div class="chno">§ · METHODOLOGY AND SOURCES</div>
+  <h2 class="head" style="font-size:clamp(28px,3.2vw,44px)">How we know what we know.</h2>
+  <div class="cols">
+   <div class="c5">
+    <p><b>Definitions and reference dates.</b> Fleet baseline: 2,210 buses at 31 Dec 2025 (452 BEV + 10 H₂ + 1,748 CNG; 20.9 % ZE). Lines and kilometres: EMT GTFS (feed 6 Nov 2026), reference day Tuesday 17 Nov 2026: 234 lines, 339,220 in-service km. Peak buses: EMT supply file, proxy day Tue 12 May 2026 (2,042 buses).</p>
+    <p><b>Energy and power.</b> 1.30 / 1.85 kWh/km (standard / articulated), ranges 300 / 240 km, 100 kW chargers, 7-hour window, 90 % efficiency (brief §4.5). Managed MW = night energy ÷ (7 × 0.90).</p>
+    <p><b>Depots.</b> Lines assigned from EMT's historical-lines table. Connections: Carabanchel 10 MVA, Sanchinarro 8 MW and La Elipa 20 MW (planned ceiling) are <span class="ev Evidenced">Evidenced</span>; Fuencarral and Entrevías are <span class="ev Estimated">Estimated</span> from Carabanchel's MW per bus. Readiness is indicative, not a utility approval.</p>
+    <p><b>Scenarios.</b> S0 and S1 are File 4 (2026–2035). S2 and S3 are supplementary scenarios run on the same notebook engine; S3 is extended to 2038. They are modelled paths, not commitments. Capex in constant 2025 €, ex-VAT, undiscounted. CO₂ = CNG tank-to-wheel (MITECO) + electricity generation (REE 2025, 108.4 g/kWh, held constant).</p>
+    <p><b>Sources.</b> EMT Madrid open data and GTFS; Madrid city service charter 2026; Red Eléctrica 2025; MITECO; TED tender notices (La Elipa, Sanchinarro, Carabanchel); STIB, TfL, BVG and HSL open data and reports; Ember via Our World in Data. Full list in the analytical report, Annex G.</p>
+   </div>
+   <div class="c7">
+    <div class="ctrlrow"><div class="label" style="margin:0">Assumptions register</div><div class="seg" id="regF"><button class="on" data-c="all">All</button><button data-c="V">V verified</button><button data-c="D">D derived</button><button data-c="P">P proxy</button><button data-c="A">A assumption</button></div></div>
+    <div class="regwrap"><table class="reg"><thead><tr><th>ID</th><th>Variable</th><th>Value</th><th>Class</th><th>Evidence / reason</th></tr></thead><tbody id="regBody"></tbody></table></div>
+   </div>
+  </div>
+ </div>
+</section>
+<footer><div class="wrap">Team VEZA · IE Sustainability Datathon 2026 (Kearney challenge) · Independent student analysis, not an official publication of EMT or the City of Madrid. Data shown is exactly that of the submitted Files 1–4 and the supplementary notebook outputs. Map data © OpenStreetMap contributors, tiles OpenFreeMap.</div></footer>
+
+<script>const D = __DATA__;</script>
+<script>/*__JS__*/</script>
+</body></html>
