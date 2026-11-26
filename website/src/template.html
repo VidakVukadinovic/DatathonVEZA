@@ -4,7 +4,7 @@
 <title>VEZA · Electrifying EMT Madrid: every bus, every depot, every kilowatt</title>
 <meta name="description" content="Can Madrid electrify its entire EMT bus fleet, and what would it actually take? An interactive investigation by Team VEZA, IE Sustainability Datathon 2026 (Kearney challenge).">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
@@ -12,7 +12,7 @@
 </head><body>
 
 <nav class="topnav"><div class="wrap">
- <a class="logo" href="#ch1"><i></i>VEZA</a>
+ <a class="logo" href="#ch1">VEZA <span class="bullets"><b style="background:#2E8B57">M</b><b style="background:#D99A06">A</b><b style="background:#C8372D">D</b></span></a>
  <div class="navlinks">
   <a href="#ch1"><span>01</span>The transition</a><a href="#ch2"><span>02</span>Depot bottleneck</a><a href="#ch3"><span>03</span>Network &amp; lines</a>
   <a href="#ch4"><span>04</span>Four futures</a><a href="#ch5"><span>05</span>Roadmap 2038</a><a href="#ch6"><span>06</span>Other cities</a><a href="#ch7"><span>07</span>Decisions</a><a href="#methods"><span>§</span>Methods</a>
@@ -20,24 +20,31 @@
  <div class="briefmenu"><button>Brief views ▾</button><div><a href="#view1"><b>(i)</b> EMT routes by charging strategy / S1 year</a><a href="#view2"><b>(ii)</b> Depots: lines, buses, MW, connection, readiness</a><a href="#view3"><b>(iii)</b> Benchmark: Madrid vs four capitals</a><a href="#view4"><b>(iv)</b> Scenarios S0 vs S1, 2026–2035</a></div></div></div><div class="progress" id="progress"></div></nav>
 
 <!-- ===================== 01 THE TRANSITION ===================== -->
-<section id="ch1" class="dark">
- <div class="hero">
-  <div id="heroMap"><span id="view2" class="viewtag" style="position:absolute;left:16px;top:16px;z-index:4">VIEW (ii) · Depots · File 3</span>
-   <div class="maplegend"><b>Depot readiness (indicative)</b><br>
-    <span class="dot" style="background:var(--ready)"></span>Ready ≤ 1.0×<br><span class="dot" style="background:var(--upgrade)"></span>Upgrade ≤ 1.5×<br><span class="dot" style="background:var(--critical)"></span>Critical &gt; 1.5×<br>
-    <span class="dot" style="background:#9eabc6"></span>solid = Evidenced connection<br><span class="dot hatch" style="color:#9eabc6"></span>dashed, hatched = Estimated (proxy)<br>
-    <span style="color:#6f7d9b">Circle size ∝ buses assigned · lines coloured by their depot</span></div>
+<section id="ch1" class="paper">
+ <div class="wrap">
+  <div class="hero-top">
+   <h1>Can Madrid electrify its entire bus fleet, and what would it <em>actually take?</em></h1>
+   <div>
+    <p class="q mono" style="font-family:var(--mono);font-size:12px;margin:8px 0 10px">IE Sustainability Datathon 2026 · Kearney challenge · Team VEZA</p>
+    <p class="open">Every bus. Every depot. Every kilowatt. Electrifying a fleet is not simply a matter of replacing gas buses with electric ones. Every vehicle needs somewhere to charge, and every depot needs the electricity infrastructure to support it.</p>
+    <a class="arrow" href="#ch4">See the four futures</a><a class="arrow" href="#ch5">Read the 2038 roadmap</a>
+   </div>
   </div>
-  <aside class="hero-side">
-   <div class="kick">IE Sustainability Datathon 2026 · Kearney challenge</div>
-   <h1>Every bus.<br>Every depot.<br><em>Every kilowatt.</em></h1>
-   <p class="q">Can Madrid electrify its entire EMT bus fleet, and what would it actually take?</p>
-   <p class="open">Electrifying a fleet is not simply a matter of replacing gas buses with electric ones. Every vehicle needs somewhere to charge, and every depot needs the electricity infrastructure to support it.</p>
-   <div class="depchips" id="heroChips"></div>
-   <div class="depcard" id="depCard"></div>
-  </aside>
+  <div class="hero">
+   <aside class="hero-side">
+    <div class="mono">The five depots · click one to explore</div>
+    <div class="depchips" id="heroChips"></div>
+    <div class="depcard" id="depCard"></div>
+   </aside>
+   <div class="mapcard"><div id="heroMap"><span id="view2" class="viewtag" style="position:absolute;left:12px;top:12px;z-index:4">VIEW (ii) · Depots · File 3</span>
+    <div class="maplegend"><b>Depot readiness (indicative)</b><br>
+     <span class="dot" style="background:var(--ready)"></span>Ready ≤ 1.0×<br><span class="dot" style="background:var(--upgrade)"></span>Upgrade ≤ 1.5×<br><span class="dot" style="background:var(--critical)"></span>Critical &gt; 1.5×<br>
+     <span class="dot" style="background:#6E6E6A"></span>solid = Evidenced connection<br><span class="dot hatch" style="color:#6E6E6A"></span>dashed, hatched = Estimated (proxy)<br>
+     <span style="color:var(--muted)">Circle size ∝ buses assigned · lines coloured by their depot</span></div>
+   </div></div>
+  </div>
+  <div class="stats" id="heroStats"></div>
  </div>
- <div class="stats" id="heroStats"></div>
 </section>
 
 <!-- ===================== 02 DEPOT BOTTLENECK ===================== -->
@@ -58,9 +65,9 @@
    </div>
    <div class="c4">
     <div class="label">Shortfall at current settings</div>
-    <div class="bigfig red" id="shortBig">23.3</div><div style="font:700 16px Inter;margin-top:-2px">MW short across the network</div>
+    <div class="bigfig red" id="shortBig">23.3</div><div class="muted" style="font-size:14px">MW short across the network</div>
     <div class="rule" style="margin:26px 0"></div>
-    <p class="quote" style="font-size:22px">An electric bus can be purchased and delivered relatively quickly. A substation, grid connection or major depot upgrade can take years.</p>
+    <p class="quote" style="font-size:22px;line-height:28px">An electric bus can be purchased and delivered relatively quickly. A substation, grid connection or major depot upgrade can take years.</p>
     <p class="muted" style="font-size:15px;margin-top:18px">That is why infrastructure, not vehicle supply, sets the speed of fleet electrification. London reports 3–10 years from grid application to energisation; Brussels' Marly II depot took about four years.</p>
     <div id="g_sel" class="panel" style="margin-top:20px"></div>
    </div>
@@ -93,12 +100,12 @@
   <div class="rule"></div>
   <div class="cols">
    <div class="c7">
-    <h3 style="font-size:26px;margin:0 0 6px;color:#fff;letter-spacing:-.02em">Why six lines need terminal charging</h3>
+    <h3 style="font:300 26px/30px var(--sans);margin:0 0 6px;letter-spacing:-.5px">Why six lines need terminal charging</h3>
     <p class="muted" style="margin:0 0 12px">Average kilometres each bus runs per day on every line. Beyond the assumed range, a bus cannot finish its day on one overnight charge.</p>
     <div id="rangeChart" class="chart"></div>
    </div>
    <div class="c5">
-    <h3 style="font-size:26px;margin:0 0 6px;color:#fff;letter-spacing:-.02em">How lines are prioritised</h3>
+    <h3 style="font:300 26px/30px var(--sans);margin:0 0 6px;letter-spacing:-.5px">How lines are prioritised</h3>
     <p class="muted" style="margin:0 0 16px">Depot-feasible lines come first because they need no new on-street infrastructure. Within each group, lines are ranked by a weighted score of percentile ranks:</p>
     <div class="method"><div><div class="num">40%</div>CO₂ avoided<br><span class="muted" style="font-size:12.5px">climate impact</span></div><div><div class="num">30%</div>Passengers / day<br><span class="muted" style="font-size:12.5px">people who benefit at street level</span></div><div><div class="num">30%</div>Range headroom<br><span class="muted" style="font-size:12.5px">1 − km per bus ÷ range: low operational risk first</span></div></div>
     <p class="note">Classification A (assumption) in the register. Range sensitivity (Rule 2): counting off-peak buses flags 23 lines, a first-to-last-span block 29 lines and +10 % deadheading 11 lines. Brussels' real vehicle blocks show only 1 of 874 exceeding 300 km, so most of these are a scheduling question rather than a charging one.</p>
@@ -157,7 +164,7 @@
   <div class="timeline" id="timeline"><div class="tl-track"></div><div class="tl-fill" id="tlFill"></div></div>
   <div class="cols">
    <div class="c7">
-    <div style="display:flex;align-items:baseline;gap:18px"><div class="bigfig" id="rmYear" style="color:var(--ink)">2030</div><button class="play" id="play5" style="background:var(--ink)">▶</button><div id="rmPhase" style="font:700 15px Inter;color:var(--ink-2)"></div></div>
+    <div style="display:flex;align-items:baseline;gap:18px"><div class="bigfig" id="rmYear" style="font-size:72px;line-height:72px">2030</div><button class="play" id="play5">▶</button><div id="rmPhase" class="mono"></div></div>
     <div class="fleetbar" id="rmBar"></div>
     <div class="rm-stats" id="rmStats"></div>
     <div class="label" style="margin-top:28px">Depot readiness this year: no action (grey) vs with mitigations (colour) · dashed = connection limit</div>
@@ -180,7 +187,7 @@
   </div>
   <div class="rule"></div>
   <div class="cols">
-   <div class="c7"><h3 style="font-size:26px;margin:0 0 6px;letter-spacing:-.02em">The trade-off, in one picture</h3>
+   <div class="c7"><h3 style="font:300 26px/30px var(--sans);margin:0 0 6px;letter-spacing:-.5px">The trade-off, in one picture</h3>
     <p class="muted" style="margin:0 0 8px">CO₂ avoided over 2026–35 against the highest single year of spending. Bubble size = stranded CNG value.</p><div id="tradeoff" class="chart"></div></div>
    <div class="c5" style="align-self:center"><p class="insight" style="margin:0"><b>S3 avoids about 425 kt of CO₂ over 2026–35, against 623 kt for S2 and 800 kt for S1.</b> In exchange, it cuts peak annual capex to about €145 M, cuts stranded value to about €62 M, and gives the grid a six-year runway: no depot needs new capacity before 2033. From 2038, it avoids about 107 kt a year.</p></div>
   </div>
@@ -203,10 +210,10 @@
   <p class="note">Source: File 1 (fleet at end-2025 or the closest date; reference days per city). ZE = battery-electric + hydrogen only. Grid intensity: Madrid REE 2025; peers Ember 2025 (lifecycle basis, Spain = 153.6 g/kWh on that basis).</p>
   <div class="rule"></div>
   <div class="cases">
-   <div class="case"><div class="k">Procurement · depots</div><h4>London</h4><p>Every new bus has been zero-emission since 2021. Garages with weak connections use smart charging and on-site batteries (Southall: 500 kVA + 1.2 MWh).</p><p><b style="color:#fff">For Madrid:</b> ZE-only purchases from 2026; a day-charged battery at Sanchinarro.</p><div class="lim">Limit: TfL tenders routes to private operators who own the buses; EMT carries the capex itself.</div></div>
-   <div class="case"><div class="k">E-native depots · terminals</div><h4>Berlin</h4><p>BVG is building two ~200-bus electric depots and a small network of terminal fast chargers (line 200: 2 × 450 kW).</p><p><b style="color:#fff">For Madrid:</b> design Las Tablas as an e-native relief depot; terminal chargers only for the six long Sanchinarro lines.</p><div class="lim">Limit: Berlin rations depot grid capacity; there is no firm 100 % zero-tailpipe year.</div></div>
-   <div class="case"><div class="k">Scheduling · phasing</div><h4>Brussels</h4><p>STIB's published vehicle blocks show range is rarely binding when schedules are designed for it. STIB has moved its target from 2030 to end-2035.</p><p><b style="color:#fff">For Madrid:</b> reschedule long blocks before buying range; plan for multi-year depot projects.</p><div class="lim">Limit: a much smaller bus network (51 lines) with trams and metro carrying most demand.</div></div>
-   <div class="case"><div class="k">Tenders · clean grid</div><h4>Helsinki</h4><p>52 % zero-emission, with ZE criteria in operator tenders and a 57.5 g/kWh grid.</p><p><b style="color:#fff">For Madrid:</b> put ZE minimums in every procurement. At 108.4 g/kWh, each e-bus already cuts CO₂ by ≈87 % vs CNG.</p><div class="lim">Limit: HSL tenders operations (operators bring buses and depots); the fleet figure is a proxy.</div></div>
+   <div class="case"><div class="k">Procurement · depots</div><h4>London</h4><p>Every new bus has been zero-emission since 2021. Garages with weak connections use smart charging and on-site batteries (Southall: 500 kVA + 1.2 MWh).</p><p><b>For Madrid:</b> ZE-only purchases from 2026; a day-charged battery at Sanchinarro.</p><div class="lim">Limit: TfL tenders routes to private operators who own the buses; EMT carries the capex itself.</div></div>
+   <div class="case"><div class="k">E-native depots · terminals</div><h4>Berlin</h4><p>BVG is building two ~200-bus electric depots and a small network of terminal fast chargers (line 200: 2 × 450 kW).</p><p><b>For Madrid:</b> design Las Tablas as an e-native relief depot; terminal chargers only for the six long Sanchinarro lines.</p><div class="lim">Limit: Berlin rations depot grid capacity; there is no firm 100 % zero-tailpipe year.</div></div>
+   <div class="case"><div class="k">Scheduling · phasing</div><h4>Brussels</h4><p>STIB's published vehicle blocks show range is rarely binding when schedules are designed for it. STIB has moved its target from 2030 to end-2035.</p><p><b>For Madrid:</b> reschedule long blocks before buying range; plan for multi-year depot projects.</p><div class="lim">Limit: a much smaller bus network (51 lines) with trams and metro carrying most demand.</div></div>
+   <div class="case"><div class="k">Tenders · clean grid</div><h4>Helsinki</h4><p>52 % zero-emission, with ZE criteria in operator tenders and a 57.5 g/kWh grid.</p><p><b>For Madrid:</b> put ZE minimums in every procurement. At 108.4 g/kWh, each e-bus already cuts CO₂ by ≈87 % vs CNG.</p><div class="lim">Limit: HSL tenders operations (operators bring buses and depots); the fleet figure is a proxy.</div></div>
   </div>
  </div>
 </section>
@@ -250,10 +257,10 @@
   </div>
  </div>
 </section>
-<section class="final dark" style="border-top:1px solid var(--night-line)">
+<section class="final paper">
  <div class="wrap">
   <p class="quote">Electrifying Madrid's bus fleet is not simply a vehicle replacement exercise. It is a coordinated transformation of transport operations, electricity infrastructure, public investment and fleet management.</p>
-  <p class="lede" style="margin-top:34px">Our recommendation is a lifecycle-based transition to <b style="color:var(--bev)">2038</b>, with the flexibility to accelerate if the required grid capacity, procurement and funding conditions materialise.</p>
+  <p class="lede" style="margin-top:34px">Our recommendation is a lifecycle-based transition to <b style="color:var(--cobalt);font-weight:500">2038</b>, with the flexibility to accelerate if the required grid capacity, procurement and funding conditions materialise.</p>
  </div>
 </section>
 
@@ -277,7 +284,11 @@
   </div>
  </div>
 </section>
-<footer><div class="wrap">Team VEZA · IE Sustainability Datathon 2026 (Kearney challenge) · Independent student analysis, not an official publication of EMT or the City of Madrid. Data shown is exactly that of the submitted Files 1–4 and the supplementary notebook outputs. Map data © OpenStreetMap contributors, tiles OpenFreeMap.</div></footer>
+<footer><div class="wrap fwrap">
+ <div><div class="flogo">VEZA <span class="bullets"><b style="background:#2E8B57">M</b><b style="background:#D99A06">A</b><b style="background:#C8372D">D</b></span></div>
+  Team VEZA · IE Sustainability Datathon 2026, Kearney challenge.<br>Independent student analysis; not affiliated with EMT Madrid or the City of Madrid.</div>
+ <div>Data: EMT Madrid open data and GTFS, Madrid city service charter, Red Eléctrica, MITECO, STIB, TfL, BVG, HSL, Ember / Our World in Data. Views (i)–(iv) show exactly the submitted Files 1–4; S2/S3 sections are supplementary notebook outputs. Map data © OpenStreetMap contributors, tiles OpenFreeMap.</div>
+</div></footer>
 
 <script>const D = __DATA__;</script>
 <script>/*__JS__*/</script>

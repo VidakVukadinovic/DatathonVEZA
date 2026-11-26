@@ -6,11 +6,11 @@
 const $ = (s, el = document) => el.querySelector(s), $$ = (s, el = document) => [...el.querySelectorAll(s)];
 const fmt = (v, d = 0) => v == null || Number.isNaN(v) ? '—' : Number(v).toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-const C = { bev: '#14b8a6', cng: '#c9a46a', h2: '#4d8cff', ready: '#2fa36b', upgrade: '#e8a417', critical: '#e0483e', mad: '#1d5fd6',
-  S0: '#8b93a7', S1: '#e0483e', S2: '#e8a417', S3: '#14b8a6', grid: '#22304f', ink: '#dfe6f3', mute: '#7d8aa3' };
+const C = { bev: '#0039A6', cng: '#B9A27C', h2: '#5C7FC6', ready: '#2E8B57', upgrade: '#D99A06', critical: '#C8372D', mad: '#0039A6',
+  S0: '#A3A29D', S1: '#C8372D', S2: '#D99A06', S3: '#0039A6', grid: '#E7E6E2', ink: '#18181B', mute: '#6E6E6A' };
 const RC = { Ready: C.ready, Upgrade: C.upgrade, Critical: C.critical };
 const DEPOTS = ['Carabanchel', 'Fuencarral', 'La Elipa', 'Entrevías', 'Sanchinarro'];
-const DCOL = { Carabanchel: '#4d8cff', Fuencarral: '#b07cff', 'La Elipa': '#14b8a6', 'Entrevías': '#ff8a65', Sanchinarro: '#f2c14e' };
+const DCOL = { Carabanchel: '#0039A6', Fuencarral: '#7A4FB8', 'La Elipa': '#1B9E77', 'Entrevías': '#E0663A', Sanchinarro: '#C99A06' };
 const readiness = r => r <= 1 ? 'Ready' : r <= 1.5 ? 'Upgrade' : 'Critical';
 const F3 = Object.fromEntries(D.f3.map(d => [d.depot_name, d]));
 const F2 = Object.fromEntries(D.f2.map(r => [String(r.line_id), r]));
@@ -18,12 +18,12 @@ const EXTRA = Object.fromEntries(D.site.lines_extra.map(r => [String(r.line_id),
 const SC = D.site.scenarios, YEARS = Array.from({ length: 13 }, (_, i) => 2026 + i);
 const state = { depot: null, scen: 'S3', year: 2030 };
 const charts = [];
-const EC_TEXT = { fontFamily: 'Roboto, sans-serif', color: C.ink };
+const EC_TEXT = { fontFamily: 'Geist, sans-serif', color: C.ink };
 function ec(id, light) { const c = echarts.init(document.getElementById(id), null, { renderer: 'canvas' }); c.__light = !!light; charts.push(c); return c; }
 window.addEventListener('resize', () => { charts.forEach(c => c.resize()); drawGauges(); drawDots(true); });
-const axisDark = { axisLine: { lineStyle: { color: C.grid } }, axisLabel: { color: C.mute, fontSize: 11 }, splitLine: { lineStyle: { color: '#182440' } }, axisTick: { show: false } };
-const axisLight = { axisLine: { lineStyle: { color: '#cfc6b4' } }, axisLabel: { color: '#5a6274', fontSize: 11 }, splitLine: { lineStyle: { color: '#e6dfd1' } }, axisTick: { show: false } };
-const tipDark = { backgroundColor: '#0f1830', borderColor: '#22304f', textStyle: { color: '#dfe6f3', fontSize: 12 } };
+const axisDark = { axisLine: { lineStyle: { color: '#D6D4CE' } }, axisLabel: { color: C.mute, fontSize: 11, fontFamily: 'Geist Mono, monospace' }, splitLine: { lineStyle: { color: '#EFEEEA' } }, axisTick: { show: false } };
+const axisLight = axisDark;
+const tipDark = { backgroundColor: '#FFFFFF', borderColor: '#E7E6E2', textStyle: { color: '#18181B', fontSize: 12, fontFamily: 'Geist, sans-serif' }, extraCssText: 'border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.08)' };
 
 /* ---------- linked state ---------- */
 const listeners = [];
@@ -46,11 +46,11 @@ function darkify(map) {
   }
 }
 const OSM_DARK = { version: 8, sources: { osm: { type: 'raster', tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'], tileSize: 256, attribution: '© OpenStreetMap contributors' } },
-  layers: [{ id: 'bg', type: 'background', paint: { 'background-color': '#0a1020' } }, { id: 'osm', type: 'raster', source: 'osm', paint: { 'raster-saturation': -1, 'raster-brightness-max': 0.32, 'raster-contrast': 0.15, 'raster-opacity': 0.9 } }] };
+  layers: [{ id: 'bg', type: 'background', paint: { 'background-color': '#FBFBFA' } }, { id: 'osm', type: 'raster', source: 'osm', paint: { 'raster-saturation': -1, 'raster-opacity': 0.55 } }] };
 function makeMap(container, opts, onReady) {
   const map = new maplibregl.Map(Object.assign({ container, style: 'https://tiles.openfreemap.org/styles/positron', center: [-3.69, 40.425], zoom: 10.9, attributionControl: { compact: true }, cooperativeGestures: false }, opts));
   let fell = false; map.on('error', () => { if (!fell && !map.isStyleLoaded()) { fell = true; map.setStyle(OSM_DARK); } });
-  map.on('load', () => { if (!fell) darkify(map); onReady(map); });
+  map.on('load', () => onReady(map));
   map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
   map.scrollZoom.disable(); map.on('click', () => map.scrollZoom.enable());
   return map;
@@ -104,7 +104,7 @@ listeners.push(() => $$('.chip').forEach(b => b.classList.toggle('on', b.dataset
 function depCard() {
   const el = $('#depCard');
   if (!state.depot) {
-    el.innerHTML = `<div class="label">Explore the five depots</div><p style="margin:0;color:#aab6cd;font-size:14.5px">Click a depot on the map. Each line is drawn in the colour of the depot its buses return to at night. Circle colour shows whether the depot's grid connection could carry a fully electric fleet.</p>
+    el.innerHTML = `<div class="label">Explore the five depots</div><p style="margin:0;color:var(--muted);font-size:14.5px">Click a depot on the map. Each line is drawn in the colour of the depot its buses return to at night. Circle colour shows whether the depot's grid connection could carry a fully electric fleet.</p>
     <div class="grid">${D.f3.map(d => `<div class="kv" style="cursor:pointer" data-d="${d.depot_name}"><div class="num" style="color:${RC[d.readiness_status]}">${(d.peak_mw_managed / d.connection_mw_estimate).toFixed(2)}×</div><div class="t">${d.depot_name}</div></div>`).join('')}</div>`;
     $$('[data-d]', el).forEach(x => x.onclick = () => setDepot(x.dataset.d)); return;
   }
@@ -123,14 +123,16 @@ function depCard() {
 }
 listeners.push(depCard); depCard();
 
+const DEP_BOUNDS = [[Math.min(...D.f3.map(d => d.longitude)) - 0.02, Math.min(...D.f3.map(d => d.latitude)) - 0.03], [Math.max(...D.f3.map(d => d.longitude)) + 0.02, Math.max(...D.f3.map(d => d.latitude)) + 0.02]];
 let heroMap, heroEls = {};
 heroMap = makeMap('heroMap', { center: [-3.69, 40.43], zoom: 11.05 }, map => {
   map.addSource('spokes', { type: 'geojson', data: spokesFC() });
-  map.addLayer({ id: 'spokes', type: 'line', source: 'spokes', paint: { 'line-color': ['get', 'c'], 'line-width': 0.6, 'line-opacity': 0.18 } });
+  map.addLayer({ id: 'spokes', type: 'line', source: 'spokes', paint: { 'line-color': ['get', 'c'], 'line-width': 0.6, 'line-opacity': 0.22 } });
   map.addSource('lines', { type: 'geojson', data: linesFC(r => DCOL[r.depot_name]) });
-  map.addLayer({ id: 'lines', type: 'line', source: 'lines', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': ['get', 'c'], 'line-width': 1.5, 'line-opacity': 0.62 } });
+  map.addLayer({ id: 'lines', type: 'line', source: 'lines', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': ['get', 'c'], 'line-width': 1.4, 'line-opacity': 0.7 } });
   map.addLayer({ id: 'lines-hi', type: 'line', source: 'lines', filter: ['==', ['get', 'depot'], ''], layout: { 'line-cap': 'round' }, paint: { 'line-color': ['get', 'c'], 'line-width': 2.8, 'line-opacity': 1 } });
   heroEls = depotMarkers(map, setDepot);
+  map.fitBounds(DEP_BOUNDS, { padding: { top: 70, bottom: 40, left: 60, right: 90 }, duration: 0 });
   const pop = new maplibregl.Popup({ closeButton: false, closeOnClick: false, offset: 8 });
   map.on('mousemove', 'lines', e => { const r = F2[e.features[0].properties.id]; map.getCanvas().style.cursor = 'pointer';
     pop.setLngLat(e.lngLat).setHTML(`<b>Line ${r.line_id}</b> · ${r.depot_name}<br>${fmt(r.daily_km)} km/day · ${r.peak_buses} peak buses`).addTo(map); });
@@ -141,11 +143,11 @@ heroMap = makeMap('heroMap', { center: [-3.69, 40.43], zoom: 11.05 }, map => {
 function heroSync() {
   if (!heroMap || !heroMap.getLayer('lines')) return; const d = state.depot;
   heroMap.setFilter('lines-hi', ['==', ['get', 'depot'], d || '']);
-  heroMap.setPaintProperty('lines', 'line-opacity', d ? 0.1 : 0.62);
-  heroMap.setPaintProperty('spokes', 'line-opacity', d ? ['case', ['==', ['get', 'depot'], d], 0.55, 0.03] : 0.18);
+  heroMap.setPaintProperty('lines', 'line-opacity', d ? 0.12 : 0.7);
+  heroMap.setPaintProperty('spokes', 'line-opacity', d ? ['case', ['==', ['get', 'depot'], d], 0.5, 0.03] : 0.22);
   Object.entries(heroEls).forEach(([k, el]) => el.classList.toggle('sel', k === d));
   if (window.__noZoom) return;
-  if (d) heroMap.easeTo({ center: [F3[d].longitude, F3[d].latitude], zoom: 11.6, duration: 900 }); else heroMap.easeTo({ center: [-3.69, 40.43], zoom: 11.05, duration: 900 });
+  if (d) heroMap.easeTo({ center: [F3[d].longitude, F3[d].latitude], zoom: 11.6, duration: 900 }); else heroMap.fitBounds(DEP_BOUNDS, { padding: { top: 70, bottom: 40, left: 60, right: 90 }, duration: 900 });
 }
 listeners.push(heroSync);
 
@@ -164,26 +166,26 @@ function drawGauges() {
   const y = v => top + (H - top - bot) * (1 - v / max), h = v => (H - top - bot) * v / max;
   let s = `<defs><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" fill="#e7e0d2"/><line x1="0" y1="0" x2="0" y2="7" stroke="#a79f8f" stroke-width="2.4"/></pattern>
    <pattern id="hatchR" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="#fbe3e0"/><line x1="0" y1="0" x2="0" y2="6" stroke="#e0483e" stroke-width="2.6"/></pattern></defs>`;
-  for (let t = 0; t <= max; t += 5) s += `<line x1="${left}" x2="${W}" y1="${y(t)}" y2="${y(t)}" stroke="#e3dccd" stroke-width="1"/><text x="${left - 8}" y="${y(t) + 4}" text-anchor="end" font-size="11" fill="#8a8f9c" font-family="Roboto">${t}</text>`;
-  s += `<text x="${left - 8}" y="${top - 18}" text-anchor="end" font-size="11" fill="#8a8f9c" font-family="Inter" font-weight="700">MW</text>`;
+  for (let t = 0; t <= max; t += 5) s += `<line x1="${left}" x2="${W}" y1="${y(t)}" y2="${y(t)}" stroke="#e3dccd" stroke-width="1"/><text x="${left - 8}" y="${y(t) + 4}" text-anchor="end" font-size="11" fill="#8a8f9c" font-family="Geist">${t}</text>`;
+  s += `<text x="${left - 8}" y="${top - 18}" text-anchor="end" font-size="11" fill="#8a8f9c" font-family="Geist" font-weight="700">MW</text>`;
   let shortT = 0;
   rows.forEach((r, i) => {
     const x0 = left + i * colW + colW * 0.14, cw = colW * 0.72, bx = x0 + cw * 0.3, bw = cw * 0.4, sel = state.depot === r.name, rd = readiness(r.ratio);
     const deficit = Math.max(0, r.managed - r.conn); shortT += deficit;
     s += `<g style="cursor:pointer" data-d="${r.name}">`;
-    s += `<rect x="${x0 - 8}" y="${top - 30}" width="${cw + 16}" height="${H - top - bot + 82}" fill="${sel ? 'rgba(29,95,214,.06)' : 'transparent'}" stroke="${sel ? '#1d5fd6' : 'transparent'}" rx="4"/>`;
-    if (g2.unm) s += `<rect x="${x0 + 2}" y="${y(Math.min(r.unm, max / 1.12))}" width="${cw - 4}" height="${h(Math.min(r.unm, max / 1.12))}" fill="none" stroke="#8a8f9c" stroke-dasharray="3 4"/><text x="${x0 + cw / 2}" y="${y(Math.min(r.unm, max / 1.12)) - 6}" text-anchor="middle" font-size="10.5" fill="#8a8f9c" font-family="Roboto">unmanaged ${fmt(r.unm, 0)} MW${r.unm > max / 1.12 ? ' ↑' : ''}</text>`;
+    s += `<rect x="${x0 - 8}" y="${top - 30}" width="${cw + 16}" height="${H - top - bot + 82}" fill="${sel ? 'rgba(0,57,166,.05)' : 'transparent'}" stroke="${sel ? '#0039A6' : 'transparent'}" rx="4"/>`;
+    if (g2.unm) s += `<rect x="${x0 + 2}" y="${y(Math.min(r.unm, max / 1.12))}" width="${cw - 4}" height="${h(Math.min(r.unm, max / 1.12))}" fill="none" stroke="#8a8f9c" stroke-dasharray="3 4"/><text x="${x0 + cw / 2}" y="${y(Math.min(r.unm, max / 1.12)) - 6}" text-anchor="middle" font-size="10.5" fill="#8a8f9c" font-family="Geist">unmanaged ${fmt(r.unm, 0)} MW${r.unm > max / 1.12 ? ' ↑' : ''}</text>`;
     s += `<rect x="${x0}" y="${y(r.conn)}" width="${cw}" height="${h(r.conn)}" fill="${r.est ? 'url(#hatch)' : '#d9d1c1'}" stroke="#a79f8f" stroke-width="1" ${r.est ? 'stroke-dasharray="4 3"' : ''}/>`;
     s += `<line x1="${x0 - 4}" x2="${x0 + cw + 4}" y1="${y(r.conn)}" y2="${y(r.conn)}" stroke="#141a26" stroke-width="2"/>`;
-    s += `<text x="${x0 + cw + 6}" y="${y(r.conn) + 4}" font-size="10.5" fill="#4a5468" font-family="Inter" font-weight="700">${fmt(r.conn, 1)}</text>`;
+    s += `<text x="${x0 + cw + 6}" y="${y(r.conn) + 4}" font-size="10.5" fill="#4a5468" font-family="Geist" font-weight="700">${fmt(r.conn, 1)}</text>`;
     const okH = Math.min(r.managed, r.conn);
-    s += `<rect x="${bx}" y="${y(okH)}" width="${bw}" height="${h(okH)}" fill="#141a26"><animate attributeName="height" from="0" to="${h(okH)}" dur=".6s"/><animate attributeName="y" from="${y(0)}" to="${y(okH)}" dur=".6s"/></rect>`;
-    if (deficit > 0) s += `<rect x="${bx}" y="${y(r.managed)}" width="${bw}" height="${h(deficit)}" fill="url(#hatchR)" stroke="#e0483e" stroke-width="1.5"/><text x="${bx + bw / 2}" y="${y(r.managed) + h(deficit) / 2 + 4}" text-anchor="middle" font-size="11" font-weight="800" fill="#b3261e" font-family="Inter">−${fmt(deficit, 1)}</text>`;
-    else s += `<text x="${x0 + cw / 2}" y="${y(r.conn) + 18}" text-anchor="middle" font-size="11" font-weight="800" fill="#2f8a5d" font-family="Inter">+${fmt(r.conn - r.managed, 1)} spare</text>`;
-    s += `<text x="${x0 + cw / 2}" y="${y(Math.max(r.managed, r.conn)) - 12}" text-anchor="middle" font-size="22" font-weight="900" fill="${RC[rd]}" font-family="Inter">${r.ratio.toFixed(2)}×</text>`;
-    s += `<text x="${x0 + cw / 2}" y="${H - bot + 24}" text-anchor="middle" font-size="14" font-weight="800" fill="#141a26" font-family="Inter">${r.name}</text>`;
-    s += `<text x="${x0 + cw / 2}" y="${H - bot + 42}" text-anchor="middle" font-size="11" fill="#4a5468" font-family="Roboto">${fmt(r.managed, 1)} MW needed · ${r.d.buses_assigned} buses</text>`;
-    s += `<text x="${x0 + cw / 2}" y="${H - bot + 60}" text-anchor="middle" font-size="10.5" font-weight="700" fill="${r.est ? '#b07a00' : '#2f8a5d'}" font-family="Inter">${r.est ? '◌ ESTIMATED' : '● EVIDENCED'} · ${rd.toUpperCase()}</text>`;
+    s += `<rect x="${bx}" y="${y(okH)}" width="${bw}" height="${h(okH)}" fill="#0039A6"><animate attributeName="height" from="0" to="${h(okH)}" dur=".6s"/><animate attributeName="y" from="${y(0)}" to="${y(okH)}" dur=".6s"/></rect>`;
+    if (deficit > 0) s += `<rect x="${bx}" y="${y(r.managed)}" width="${bw}" height="${h(deficit)}" fill="url(#hatchR)" stroke="#e0483e" stroke-width="1.5"/><text x="${bx + bw / 2}" y="${y(r.managed) + h(deficit) / 2 + 4}" text-anchor="middle" font-size="11" font-weight="500" fill="#b3261e" font-family="Geist">−${fmt(deficit, 1)}</text>`;
+    else s += `<text x="${x0 + cw / 2}" y="${y(r.conn) + 18}" text-anchor="middle" font-size="11" font-weight="500" fill="#2f8a5d" font-family="Geist">+${fmt(r.conn - r.managed, 1)} spare</text>`;
+    s += `<text x="${x0 + cw / 2}" y="${y(Math.max(r.managed, r.conn)) - 12}" text-anchor="middle" font-size="26" font-weight="300" fill="${RC[rd]}" font-family="Geist">${r.ratio.toFixed(2)}×</text>`;
+    s += `<text x="${x0 + cw / 2}" y="${H - bot + 24}" text-anchor="middle" font-size="14" font-weight="500" fill="#141a26" font-family="Geist">${r.name}</text>`;
+    s += `<text x="${x0 + cw / 2}" y="${H - bot + 42}" text-anchor="middle" font-size="11" fill="#4a5468" font-family="Geist">${fmt(r.managed, 1)} MW needed · ${r.d.buses_assigned} buses</text>`;
+    s += `<text x="${x0 + cw / 2}" y="${H - bot + 60}" text-anchor="middle" font-size="10.5" font-weight="700" fill="${r.est ? '#b07a00' : '#2f8a5d'}" font-family="Geist">${r.est ? '◌ ESTIMATED' : '● EVIDENCED'} · ${rd.toUpperCase()}</text>`;
     s += `</g>`;
   });
   svg.innerHTML = s; $$('g[data-d]', svg).forEach(g => g.onclick = () => setDepot(g.dataset.d));
@@ -192,7 +194,7 @@ function drawGauges() {
   const sel = $('#g_sel');
   if (!state.depot) { sel.innerHTML = `<div class="label">Tip</div><span class="muted" style="font-size:14px">Click a column, or a depot on the map above, to see its numbers. The selection follows you through the page.</span>`; }
   else { const r = rows.find(x => x.name === state.depot);
-    sel.innerHTML = `<div class="label">${r.name} at these settings</div><div style="font:800 30px Inter;color:${RC[readiness(r.ratio)]}">${r.ratio.toFixed(2)}× · ${readiness(r.ratio)}</div>
+    sel.innerHTML = `<div class="label">${r.name} at these settings</div><div style="font:300 32px var(--sans);color:${RC[readiness(r.ratio)]}">${r.ratio.toFixed(2)}× · ${readiness(r.ratio)}</div>
      <div class="muted" style="font-size:14px">${fmt(r.managed, 1)} MW needed vs ${fmt(r.conn, 1)} MW connection (${r.est ? 'estimated proxy' : 'evidenced'}). ${r.managed > r.conn ? `Short by ${fmt(r.managed - r.conn, 1)} MW.` : `${fmt(r.conn - r.managed, 1)} MW spare.`}</div>`; }
 }
 $('#winH').oninput = e => { g2.win = +e.target.value; $('#winO').textContent = g2.win + ' h'; drawGauges(); };
@@ -206,27 +208,27 @@ listeners.push(drawGauges); drawGauges();
    ========================================================= */
 const ln = { mode: 'year', sel: null };
 const YC = { 2026: '#22c55e', 2027: '#a3e635', 2028: '#facc15', 2029: '#fb923c', 2030: '#ef4444' };
-const SCOL = { Depot: '#3b4a6b', Opportunity: '#ff4fd8', Not_feasible: '#ffffff' };
+const SCOL = { Depot: '#B8BCC6', Opportunity: '#7A4FB8', Not_feasible: '#18181B' };
 const maxRank = D.f2.length;
-function prioCol(r) { const t = 1 - (r.priority_rank - 1) / (maxRank - 1); const a = [36, 52, 88], b = [20, 230, 200]; return `rgb(${a.map((v, i) => Math.round(v + (b[i] - v) * t)).join(',')})`; }
+function prioCol(r) { const t = 1 - (r.priority_rank - 1) / (maxRank - 1); const a = [222, 226, 234], b = [0, 57, 166]; return `rgb(${a.map((v, i) => Math.round(v + (b[i] - v) * t)).join(',')})`; }
 const lineColor = r => ln.mode === 'depot' ? DCOL[r.depot_name] : ln.mode === 'strategy' ? SCOL[r.charging_strategy] : ln.mode === 'priority' ? prioCol(r) : YC[r.electrification_year];
 const lineWidth = r => r.charging_strategy === 'Opportunity' ? 3.2 : ln.mode === 'priority' ? 1 + 2.2 * (1 - (r.priority_rank - 1) / maxRank) : 1.4;
 function lineLegend() {
   let h = '';
   if (ln.mode === 'depot') h = '<b>Lines by depot</b><br>' + DEPOTS.map(d => `<span class="sw" style="background:${DCOL[d]}"></span>${d} (${F3[d].n_lines_assigned})`).join('<br>');
   if (ln.mode === 'strategy') h = '<b>Charging strategy</b><br>' + `<span class="sw" style="background:${SCOL.Depot}"></span>Depot-feasible (228)<br><span class="sw" style="background:${SCOL.Opportunity};height:4px"></span>Opportunity charging (6)`;
-  if (ln.mode === 'priority') h = '<b>Electrification priority</b><br><span class="sw" style="background:rgb(20,230,200);height:4px"></span>rank 1 (first)<br><span class="sw" style="background:rgb(36,52,88)"></span>rank 234 (last)<br><span style="color:#6f7d9b">thicker = earlier</span>';
+  if (ln.mode === 'priority') h = '<b>Electrification priority</b><br><span class="sw" style="background:rgb(0,57,166);height:4px"></span>rank 1 (first)<br><span class="sw" style="background:rgb(222,226,234)"></span>rank 234 (last)<br><span style="color:var(--muted)">thicker = earlier</span>';
   if (ln.mode === 'year') h = '<b>S1 electrification year</b> (File 2)<br>' + Object.entries(YC).map(([y, c]) => `<span class="sw" style="background:${c}"></span>${y} (${D.f2.filter(r => r.electrification_year == y).length})`).join('<br>');
-  $('#lineLegend').innerHTML = h + '<br><span style="color:#6f7d9b">Pink labels: the 6 opportunity-charging lines</span>';
+  $('#lineLegend').innerHTML = h + '<br><span style="color:var(--muted)">Purple tags: the 6 opportunity-charging lines</span>';
 }
 let lineMap;
 lineMap = makeMap('lineMap', { center: [-3.69, 40.43], zoom: 10.8 }, map => {
   map.addSource('l', { type: 'geojson', data: linesFC(lineColor, lineWidth) });
   map.addLayer({ id: 'l', type: 'line', source: 'l', layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': ['get', 'c'], 'line-width': ['get', 'w'], 'line-opacity': 0.8 } });
-  map.addLayer({ id: 'l-sel', type: 'line', source: 'l', filter: ['==', ['get', 'id'], ''], paint: { 'line-color': '#ffffff', 'line-width': 5, 'line-opacity': 0.95 } });
+  map.addLayer({ id: 'l-sel', type: 'line', source: 'l', filter: ['==', ['get', 'id'], ''], paint: { 'line-color': '#18181B', 'line-width': 4.5, 'line-opacity': 0.95 } });
   depotMarkers(map, setDepot, false);
   D.f2.filter(r => r.charging_strategy === 'Opportunity').forEach(r => { const p = D.geo[r.line_id]; if (!p) return; const part = p[0], m = part[Math.floor(part.length * 0.7)];
-    const el = document.createElement('div'); el.style.cssText = 'font:800 11px Inter;color:#0a1020;background:#ff4fd8;padding:1px 6px;border-radius:3px;cursor:pointer'; el.textContent = r.line_id;
+    const el = document.createElement('div'); el.style.cssText = 'font:500 11px Geist Mono,monospace;color:#fff;background:#7A4FB8;padding:0 7px;border-radius:20px;cursor:pointer'; el.textContent = r.line_id;
     el.onclick = () => selectLine(r.line_id); new maplibregl.Marker({ element: el }).setLngLat(m).addTo(map); });
   const pop = new maplibregl.Popup({ closeButton: false, closeOnClick: false, offset: 8 });
   map.on('mousemove', 'l', e => { const r = F2[e.features[0].properties.id]; map.getCanvas().style.cursor = 'pointer';
@@ -250,11 +252,11 @@ function selectLine(id) {
   ln.sel = id; const r = F2[id], x = EXTRA[id] || {};
   $('#lineSearch').value = id;
   $('#lineCard').innerHTML = `<div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div class="label" style="margin:0">Line</div><div class="lid">${r.line_id}</div></div>
-    <div style="text-align:right"><div class="label" style="margin:0">Priority</div><div style="font:900 30px Inter;color:var(--bev)">#${r.priority_rank}</div></div></div>
-    <div style="margin-top:8px"><span class="chip" style="cursor:default;border-color:${r.charging_strategy === 'Opportunity' ? '#ff4fd8' : 'var(--night-line)'}">${r.charging_strategy === 'Opportunity' ? 'Opportunity charging' : 'Depot-feasible'}</span>
+    <div style="text-align:right"><div class="label" style="margin:0">Priority</div><div style="font:300 32px var(--sans);color:var(--cobalt)">#${r.priority_rank}</div></div></div>
+    <div style="margin-top:8px"><span class="chip" style="cursor:default;border-color:${r.charging_strategy === 'Opportunity' ? '#7A4FB8' : 'var(--rule)'}">${r.charging_strategy === 'Opportunity' ? 'Opportunity charging' : 'Depot-feasible'}</span>
     <span class="chip" data-d="${r.depot_name}"><i style="background:${DCOL[r.depot_name]}"></i>${r.depot_name}</span></div>
     <table><tr><td>Daily kilometres</td><td>${fmt(r.daily_km, 1)} km</td></tr><tr><td>Peak buses</td><td>${r.peak_buses}</td></tr>
-    <tr><td>Km per bus per day</td><td style="color:${r.km_per_bus_day > (r.bus_type === 'Articulated' ? 240 : 300) ? '#ff8a80' : '#fff'}">${fmt(r.km_per_bus_day, 1)} km</td></tr>
+    <tr><td>Km per bus per day</td><td style="color:${r.km_per_bus_day > (r.bus_type === 'Articulated' ? 240 : 300) ? 'var(--critical)' : 'var(--ink)'}">${fmt(r.km_per_bus_day, 1)} km</td></tr>
     <tr><td>Bus type (proxy)</td><td>${r.bus_type}</td></tr><tr><td>Energy per bus per day</td><td>${fmt(r.energy_kwh_bus_day)} kWh</td></tr>
     <tr><td>Passengers per day</td><td>${x.pax_day ? fmt(x.pax_day) : 'n/a'}</td></tr><tr><td>Priority score</td><td>${x.score != null ? x.score.toFixed(3) : '—'}</td></tr>
     <tr><td>CO₂ avoided when electric</td><td>${fmt(r.co2_avoided_t_year)} t/yr</td></tr><tr><td>S1 electrification year</td><td>${r.electrification_year}</td></tr></table>
@@ -264,18 +266,18 @@ function selectLine(id) {
     lineMap.fitBounds([[Math.min(...lons), Math.min(...lats)], [Math.max(...lons), Math.max(...lats)]], { padding: 80, maxZoom: 13.5, duration: 900 }); }
   lineSync(); rangeChart.dispatchAction({ type: 'highlight', seriesIndex: 0, name: id });
 }
-$('#topList').innerHTML = [...D.f2].sort((a, b) => a.priority_rank - b.priority_rank).slice(0, 10).map(r => `<li data-l="${r.line_id}"><span><b style="color:#fff;font-family:Inter">${r.line_id}</b> · ${r.depot_name}</span><span style="color:var(--bev)">#${r.priority_rank}</span></li>`).join('');
+$('#topList').innerHTML = [...D.f2].sort((a, b) => a.priority_rank - b.priority_rank).slice(0, 10).map(r => `<li data-l="${r.line_id}"><span><b style="color:var(--ink);font-weight:500">${r.line_id}</b> · ${r.depot_name}</span><span class="mono">#${r.priority_rank}</span></li>`).join('');
 $$('#topList li').forEach(li => li.onclick = () => selectLine(li.dataset.l));
 const byKm = [...D.f2].sort((a, b) => b.km_per_bus_day - a.km_per_bus_day);
 const rangeChart = ec('rangeChart');
 rangeChart.setOption({ textStyle: EC_TEXT, grid: { left: 44, right: 70, top: 20, bottom: 26 }, tooltip: Object.assign({ trigger: 'item', formatter: p => `<b>Line ${p.name}</b><br>${fmt(p.value, 1)} km per bus per day<br>${F2[p.name].charging_strategy} · ${F2[p.name].depot_name}` }, tipDark),
   xAxis: Object.assign({ type: 'category', data: byKm.map(r => r.line_id), axisLabel: { show: false } }, { axisLine: axisDark.axisLine, axisTick: { show: false } }),
   yAxis: Object.assign({ type: 'value', name: 'km / bus / day', nameTextStyle: { color: C.mute } }, axisDark),
-  series: [{ type: 'bar', barCategoryGap: '15%', data: byKm.map(r => ({ value: r.km_per_bus_day, name: r.line_id, itemStyle: { color: r.charging_strategy === 'Opportunity' ? '#ff4fd8' : r.bus_type === 'Articulated' ? '#4d8cff' : '#2b3a5c' } })),
-    emphasis: { itemStyle: { color: '#fff' } },
-    markLine: { silent: true, symbol: 'none', data: [{ yAxis: 300, label: { formatter: 'standard range 300 km', color: '#ff8a80', position: 'insideEndTop' }, lineStyle: { color: '#ff8a80', type: 'dashed' } }, { yAxis: 240, label: { formatter: 'articulated 240 km', color: '#8fb3ff', position: 'insideEndBottom' }, lineStyle: { color: '#4d8cff', type: 'dotted' } }] },
-  }], graphic: [{ type: 'text', left: 70, top: 22, style: { text: '◀ 6 opportunity-charging lines: ' + byKm.filter(r => r.charging_strategy === 'Opportunity').map(r => r.line_id).join(', '), fill: '#ff4fd8', font: '700 12px Inter' } },
-    { type: 'text', right: 76, bottom: 34, style: { text: 'blue = articulated (proxy)', fill: '#8fb3ff', font: '500 11px Roboto' } }] });
+  series: [{ type: 'bar', barCategoryGap: '15%', data: byKm.map(r => ({ value: r.km_per_bus_day, name: r.line_id, itemStyle: { color: r.charging_strategy === 'Opportunity' ? '#7A4FB8' : r.bus_type === 'Articulated' ? '#5C7FC6' : '#D6D4CE' } })),
+    emphasis: { itemStyle: { color: '#18181B' } },
+    markLine: { silent: true, symbol: 'none', data: [{ yAxis: 300, label: { formatter: 'standard range 300 km', color: '#C8372D', position: 'insideEndTop' }, lineStyle: { color: '#C8372D', type: 'dashed' } }, { yAxis: 240, label: { formatter: 'articulated 240 km', color: '#5C7FC6', position: 'insideEndBottom' }, lineStyle: { color: '#5C7FC6', type: 'dotted' } }] },
+  }], graphic: [{ type: 'text', left: 70, top: 22, style: { text: '◀ 6 opportunity-charging lines: ' + byKm.filter(r => r.charging_strategy === 'Opportunity').map(r => r.line_id).join(', '), fill: '#7A4FB8', font: '500 12px Geist' } },
+    { type: 'text', right: 76, bottom: 34, style: { text: 'blue = articulated (proxy)', fill: '#5C7FC6', font: '400 11px Geist' } }] });
 rangeChart.on('click', p => selectLine(p.name));
 selectLine(byKm[0].line_id);
 
@@ -298,7 +300,7 @@ function summary(s) {
 }
 const SUM = Object.fromEntries(Object.keys(SC).map(s => [s, summary(s)]));
 function metrics() {
-  const m = SUM[state.scen], b = SUM.S3, rel = (v, bv, unit, inv) => state.scen === 'S3' || typeof v !== 'number' ? '' : `<div class="d" style="color:${(v > bv) !== !!inv ? '#ff8a80' : '#6fe0a6'}">${v > bv ? '+' : ''}${fmt(v - bv)}${unit} vs S3</div>`;
+  const m = SUM[state.scen], b = SUM.S3, rel = (v, bv, unit, inv) => state.scen === 'S3' || typeof v !== 'number' ? '' : `<div class="d" style="color:${(v > bv) !== !!inv ? '#C8372D' : '#2E8B57'}">${v > bv ? '+' : ''}${fmt(v - bv)}${unit} vs S3</div>`;
   const cells = [[m.ze30.toFixed(1) + ' %', 'zero-emission in 2030'], [m.ze35.toFixed(1) + ' %', 'zero-emission in 2035'], [m.y100, 'year fleet reaches 100 % ZE'],
     [fmt(m.maxBuy), 'most e-buses bought in one year', rel(m.maxBuy, b.maxBuy, '')], ['€' + fmt(m.peak) + ' M', 'peak annual capex', rel(m.peak, b.peak, ' M€')],
     ['€' + fmt(m.capex35) + ' M', 'capex 2026–35', rel(m.capex35, b.capex35, ' M€')], [fmt(m.co2) + ' kt', 'CO₂ avoided 2026–35', rel(m.co2, b.co2, ' kt', true)],
@@ -315,7 +317,7 @@ function drawDots(now) {
   const N = 2210, cols = Math.ceil(Math.sqrt(N * w / h)), rows = Math.ceil(N / cols), gap = Math.min(w / cols, h / rows), r = gap * 0.36;
   const nb = Math.round(dotAnim.bev), nh = 10;
   for (let i = 0; i < N; i++) { const cx = (i % cols) * gap + gap / 2, cy = Math.floor(i / cols) * gap + gap / 2;
-    ctx.fillStyle = i < nb ? C.bev : i < nb + nh ? C.h2 : '#7a6a4e'; ctx.beginPath(); ctx.arc(cx, cy, r, 0, 6.283); ctx.fill(); }
+    ctx.fillStyle = i < nb ? C.bev : i < nb + nh ? C.h2 : '#DCD4C4'; ctx.beginPath(); ctx.arc(cx, cy, r, 0, 6.283); ctx.fill(); }
 }
 function animateDots(target) {
   dotTarget = target; cancelAnimationFrame(dotRAF); const from = dotAnim.bev, t0 = performance.now();
@@ -327,7 +329,7 @@ function renderScen(changed) {
   const s = state.scen, y = state.year, ly = lastYear(s), yy = Math.min(y, ly), r = rowAt(s, yy), rs = rowsOf(s);
   $$('#scenSel button').forEach(b => b.classList.toggle('on', b.dataset.s === s));
   $('#y4').textContent = y; $('#yr4').value = y;
-  $('#y4note').innerHTML = y > ly ? `<span style="color:#ff8a80">${s} is modelled to ${ly} (File 4 horizon); showing ${ly}.</span>` : `${s}: ${fmt(r.n_bev + r.n_h2)} zero-emission buses, ${fmt(r.n_cng)} CNG`;
+  $('#y4note').innerHTML = y > ly ? `<span style="color:var(--critical)">${s} is modelled to ${ly} (File 4 horizon); showing ${ly}.</span>` : `${s}: ${fmt(r.n_bev + r.n_h2)} zero-emission buses, ${fmt(r.n_cng)} CNG`;
   $('#dotsCap').textContent = `${s} · end of ${yy} · ${r.ze_share_pct.toFixed(1)} % zero-emission · each dot is one bus`;
   animateDots({ bev: r.n_bev }); metrics();
   const yrs = YEARS.map(String), pad = (arr) => YEARS.map(yr => { const x = arr.find(q => q.year === yr); return x ? x : null; });
@@ -335,8 +337,8 @@ function renderScen(changed) {
     xAxis: Object.assign({ type: 'category', data: yrs, boundaryGap: false }, axisDark), yAxis: Object.assign({ type: 'value', max: 100, axisLabel: { color: C.mute, formatter: '{value}%' } }, { splitLine: axisDark.splitLine, axisLine: { show: false } }),
     series: Object.keys(SC).map(k => ({ name: k, type: 'line', smooth: 0.2, data: pad(rowsOf(k)).map(x => x ? x.ze_share_pct : null), symbol: 'circle', symbolSize: k === s ? 7 : 0, z: k === s ? 5 : 1,
       lineStyle: { width: k === s ? 4 : 1.5, color: C[k], opacity: k === s ? 1 : 0.35 }, itemStyle: { color: C[k] },
-      endLabel: { show: true, formatter: `${k}`, color: C[k], fontWeight: 800, fontFamily: 'Inter', opacity: k === s ? 1 : 0.5 },
-      markLine: k === s ? { silent: true, symbol: 'none', label: { formatter: String(y), color: '#fff', position: 'end' }, lineStyle: { color: '#fff', type: 'solid', opacity: .5 }, data: [{ xAxis: String(y) }] } : undefined })) }, true);
+      endLabel: { show: true, formatter: `${k}`, color: C[k], fontWeight: 800, fontFamily: 'Geist', opacity: k === s ? 1 : 0.5 },
+      markLine: k === s ? { silent: true, symbol: 'none', label: { formatter: String(y), color: '#18181B', position: 'end' }, lineStyle: { color: '#18181B', type: 'solid', opacity: .5 }, data: [{ xAxis: String(y) }] } : undefined })) }, true);
   const ry = rs.map(x => String(x.year));
   cFleet.setOption({ textStyle: EC_TEXT, grid: { left: 48, right: 14, top: 26, bottom: 46 }, legend: { bottom: 0, textStyle: { color: C.mute, fontSize: 11 }, itemWidth: 12 }, tooltip: Object.assign({ trigger: 'axis' }, tipDark),
     xAxis: Object.assign({ type: 'category', data: ry }, axisDark), yAxis: Object.assign({ type: 'value' }, axisDark),
@@ -347,21 +349,21 @@ function renderScen(changed) {
   let cum = 0;
   cCapex.setOption({ textStyle: EC_TEXT, grid: { left: 48, right: 50, top: 26, bottom: 46 }, legend: { bottom: 0, textStyle: { color: C.mute, fontSize: 11 }, itemWidth: 12 }, tooltip: Object.assign({ trigger: 'axis', valueFormatter: v => '€' + fmt(v) + ' M' }, tipDark),
     xAxis: Object.assign({ type: 'category', data: ry }, axisDark), yAxis: [Object.assign({ type: 'value', max: 360 }, axisDark), Object.assign({ type: 'value', max: 2000 }, axisDark, { splitLine: { show: false } })],
-    series: [['E-buses', 'bus_ze_meur', C.bev], ['Chargers', 'chargers_meur', '#4d8cff'], ['Depot civil works', 'civil_meur', '#b07cff'], ['Grid', 'grid_meur', C.critical]].map(([n, k, c]) => ({ name: n, type: 'bar', stack: 'x', data: rs.map(x => +x[k].toFixed(1)), itemStyle: { color: c } }))
+    series: [['E-buses', 'bus_ze_meur', C.bev], ['Chargers', 'chargers_meur', '#5C7FC6'], ['Depot civil works', 'civil_meur', '#B3C3E6'], ['Grid', 'grid_meur', C.critical]].map(([n, k, c]) => ({ name: n, type: 'bar', stack: 'x', data: rs.map(x => +x[k].toFixed(1)), itemStyle: { color: c } }))
       .concat([{ name: 'CNG buses', type: 'bar', stack: 'x', data: rs.map(x => +(x.capex_meur - x.bus_ze_meur - x.chargers_meur - x.civil_meur - x.grid_meur).toFixed(1)), itemStyle: { color: '#8f8573' } },
-        { name: 'Cumulative', type: 'line', yAxisIndex: 1, data: rs.map(x => +(cum += x.capex_meur).toFixed(0)), lineStyle: { color: '#fff', width: 2 }, itemStyle: { color: '#fff' }, symbolSize: 4 }]) }, true);
+        { name: 'Cumulative', type: 'line', yAxisIndex: 1, data: rs.map(x => +(cum += x.capex_meur).toFixed(0)), lineStyle: { color: '#18181B', width: 2 }, itemStyle: { color: '#18181B' }, symbolSize: 4 }]) }, true);
   let cav = 0;
   cCo2.setOption({ textStyle: EC_TEXT, grid: { left: 48, right: 50, top: 26, bottom: 46 }, legend: { bottom: 0, textStyle: { color: C.mute, fontSize: 11 }, itemWidth: 12 }, tooltip: Object.assign({ trigger: 'axis', valueFormatter: v => fmt(v, 1) + ' kt' }, tipDark),
     xAxis: Object.assign({ type: 'category', data: ry }, axisDark), yAxis: [Object.assign({ type: 'value', max: 140 }, axisDark), Object.assign({ type: 'value', max: 1000 }, axisDark, { splitLine: { show: false } })],
     series: [{ name: 'CO₂ emitted', type: 'line', data: rs.map(x => +(x.co2_t / 1e3).toFixed(1)), lineStyle: { color: '#c9a46a', width: 2.5 }, itemStyle: { color: '#c9a46a' }, areaStyle: { color: 'rgba(201,164,106,.12)' } },
       { name: 'Avoided this year', type: 'bar', data: rs.map(x => +(x.co2_avoided_t / 1e3).toFixed(1)), itemStyle: { color: C.bev, opacity: .7 } },
-      { name: 'Cumulative avoided', type: 'line', yAxisIndex: 1, data: rs.map(x => +((cav += x.co2_avoided_t) / 1e3).toFixed(0)), lineStyle: { color: '#fff', width: 2, type: 'dashed' }, itemStyle: { color: '#fff' }, symbolSize: 4 }] }, true);
+      { name: 'Cumulative avoided', type: 'line', yAxisIndex: 1, data: rs.map(x => +((cav += x.co2_avoided_t) / 1e3).toFixed(0)), lineStyle: { color: '#18181B', width: 2, type: 'dashed' }, itemStyle: { color: '#18181B' }, symbolSize: 4 }] }, true);
   const ratio = SC[s].ratio, hd = [];
   DEPOTS.forEach((d, j) => (ratio[d] || []).forEach((v, i) => hd.push([i, j, v == null ? '-' : +v.toFixed(2)])));
   cHeat.setOption({ textStyle: EC_TEXT, grid: { left: 92, right: 14, top: 10, bottom: 30 }, tooltip: Object.assign({ formatter: p => `${DEPOTS[p.value[1]]} ${ry[p.value[0]]}: ${p.value[2] === '-' ? 'closed' : p.value[2] + '×'}` }, tipDark),
-    xAxis: Object.assign({ type: 'category', data: ry, splitArea: { show: false } }, axisDark), yAxis: Object.assign({ type: 'category', data: DEPOTS }, axisDark, { axisLabel: { color: (v) => state.depot === v ? '#fff' : C.mute, fontWeight: 600 } }),
-    visualMap: { show: false, type: 'piecewise', pieces: [{ lte: 1, color: '#1f7a50' }, { gt: 1, lte: 1.5, color: '#b47f12' }, { gt: 1.5, color: '#b8382f' }] },
-    series: [{ type: 'heatmap', data: hd, label: { show: true, color: '#fff', fontSize: 10, formatter: p => p.value[2] === '-' ? '–' : p.value[2].toFixed(1) }, itemStyle: { borderColor: '#0a1020', borderWidth: 2 } }] }, true);
+    xAxis: Object.assign({ type: 'category', data: ry, splitArea: { show: false } }, axisDark), yAxis: Object.assign({ type: 'category', data: DEPOTS }, axisDark, { axisLabel: { color: (v) => state.depot === v ? C.ink : C.mute, fontWeight: 500 } }),
+    visualMap: { show: false, type: 'piecewise', pieces: [{ lte: 1, color: '#2E8B57' }, { gt: 1, lte: 1.5, color: '#D99A06' }, { gt: 1.5, color: '#C8372D' }] },
+    series: [{ type: 'heatmap', data: hd, label: { show: true, color: '#18181B', fontSize: 10, formatter: p => p.value[2] === '-' ? '–' : p.value[2].toFixed(1) }, itemStyle: { borderColor: '#FFFFFF', borderWidth: 2 } }] }, true);
 }
 $('#yr4').oninput = e => { state.year = +e.target.value; renderScen(); };
 let play4; $('#play4').onclick = () => { if (play4) { clearInterval(play4); play4 = null; $('#play4').textContent = '▶'; return; }
@@ -392,7 +394,7 @@ function renderRoadmap() {
   $('#rmMini').innerHTML = DEPOTS.map(d => { const na = S3.ratio[d][i], mi = S3.ratio_mitigated[d][i], sel = state.depot === d;
     return `<div class="g" data-d="${d}" style="cursor:pointer"><div class="bar" style="${sel ? 'outline:2px solid var(--mad)' : ''}"><div class="lim" style="bottom:${1 / M * 100}%"></div>
       <div class="na" style="height:${na == null ? 0 : Math.min(na, M) / M * 100}%"></div><div class="mi" style="height:${mi == null ? 0 : Math.min(mi, M) / M * 100}%;background:${mi == null ? '#ccc' : RC[readiness(mi)]}"></div></div>
-      <b style="font-family:Inter">${d}</b><br><span class="muted">${na == null ? 'closed' : na.toFixed(2) + '× → ' + mi.toFixed(2) + '×'}</span></div>`; }).join('');
+      <b style="font-weight:500">${d}</b><br><span class="muted">${na == null ? 'closed' : na.toFixed(2) + '× → ' + mi.toFixed(2) + '×'}</span></div>`; }).join('');
   $$('#rmMini [data-d]').forEach(g => g.onclick = () => setDepot(g.dataset.d));
   $$('#mitList li').forEach(li => li.classList.toggle('on', li.dataset.y.split(',').includes(String(rmY))));
 }
@@ -400,12 +402,12 @@ listeners.push(renderRoadmap); renderRoadmap();
 let play5; $('#play5').onclick = () => { if (play5) { clearInterval(play5); play5 = null; $('#play5').textContent = '▶'; return; }
   $('#play5').textContent = '❚❚'; if (rmY >= 2038) rmY = 2025; play5 = setInterval(() => { rmY++; renderRoadmap(); if (rmY >= 2038) { clearInterval(play5); play5 = null; $('#play5').textContent = '▶'; } }, 1000); };
 const trade = ec('tradeoff', true);
-trade.setOption({ textStyle: { fontFamily: 'Roboto', color: '#141a26' }, grid: { left: 60, right: 30, top: 20, bottom: 50 },
+trade.setOption({ textStyle: { fontFamily: 'Geist', color: '#18181B' }, grid: { left: 60, right: 30, top: 20, bottom: 50 },
   tooltip: { formatter: p => `<b>${p.data.k}</b><br>Peak capex €${fmt(p.data.value[0])} M<br>CO₂ avoided 2026–35: ${fmt(p.data.value[1])} kt<br>Stranded CNG value €${fmt(p.data.value[2])} M` },
   xAxis: Object.assign({ type: 'value', name: 'Peak annual capex (M€)', nameLocation: 'middle', nameGap: 30, min: 100, max: 380, nameTextStyle: { color: '#5a6274' } }, axisLight),
   yAxis: Object.assign({ type: 'value', name: 'CO₂ avoided 2026–35 (kt)', nameLocation: 'middle', nameGap: 42, min: 200, max: 900, nameTextStyle: { color: '#5a6274' } }, axisLight),
   series: [{ type: 'scatter', data: Object.keys(SC).map(k => ({ k, value: [SUM[k].peak, SUM[k].co2, SUM[k].stranded], itemStyle: { color: C[k], opacity: .9 } })),
-    symbolSize: v => 18 + Math.sqrt(v[2]) * 4.2, label: { show: true, formatter: p => `${p.data.k}${p.data.k === 'S3' ? ' · our plan' : ''}`, position: 'right', fontFamily: 'Inter', fontWeight: 800, color: '#141a26', distance: 12 } }] });
+    symbolSize: v => 18 + Math.sqrt(v[2]) * 4.2, label: { show: true, formatter: p => `${p.data.k}${p.data.k === 'S3' ? ' · our plan' : ''}`, position: 'right', fontFamily: 'Geist', fontWeight: 800, color: '#18181B', distance: 12 } }] });
 
 /* =========================================================
    06 · OTHER CITIES
@@ -418,7 +420,7 @@ function renderCities() {
     ['Energy for a 100 % BEV network (MWh/day)', 'energy_full_bev_mwh_day', 0], ['Grid carbon intensity (g CO₂/kWh)', 'grid_co2_g_kwh', 1], ['Weekday km per bus', null, 0]];
   const val = (r, k) => k ? r[k] : r.daily_bus_km / r.fleet_total;
   $('#bfly').innerHTML = rows.map(([lbl, k, dp, u]) => { const va = val(a, k), vb = val(b, k), m = Math.max(va, vb) || 1;
-    return `<div class="r"><div class="a"><span class="v">${fmt(va, dp)}${u || ''}</span><div class="bar" style="width:${va / m * 85}%;background:${a.city === 'Madrid' ? C.mad : '#5b6b8c'}"></div></div><div class="m">${lbl}</div>
+    return `<div class="r"><div class="a"><span class="v">${fmt(va, dp)}${u || ''}</span><div class="bar" style="width:${va / m * 85}%;background:${a.city === 'Madrid' ? C.mad : '#A3A29D'}"></div></div><div class="m">${lbl}</div>
      <div class="b"><div class="bar" style="width:${vb / m * 85}%;background:${b.city === 'Madrid' ? C.mad : C.bev}"></div><span class="v">${fmt(vb, dp)}${u || ''}</span></div></div>`; }).join('') +
     [['100 % ZE target year', a.ze_target_year || 'none published', b.ze_target_year || 'none published'], ['Charging model', a.charging_model, b.charging_model], ['Reference day · fleet date', `${a.reference_date} · ${a.fleet_data_year}`, `${b.reference_date} · ${b.fleet_data_year}`]]
       .map(([l, x, y]) => `<div class="r"><div class="a"><span class="v" style="min-width:0">${x}</span></div><div class="m">${l}</div><div class="b"><span class="v" style="min-width:0">${y}</span></div></div>`).join('');
@@ -434,7 +436,7 @@ renderCities();
   const base = { textStyle: EC_TEXT, grid: { left: 40, right: 10, top: 14, bottom: 66 }, legend: { bottom: 0, textStyle: { color: C.mute, fontSize: 10.5 }, itemWidth: 10, itemGap: 8, itemHeight: 8 }, tooltip: Object.assign({ trigger: 'axis' }, tipDark),
     xAxis: Object.assign({ type: 'category', data: Y }, axisDark, { axisLabel: { color: C.mute, fontSize: 10, interval: 1 } }) };
   ec('v4a').setOption(Object.assign({}, base, { yAxis: Object.assign({ type: 'value', max: 100 }, axisDark), series: [{ name: 'S0 plan-based', type: 'line', data: S(0, 'ze_share_pct'), color: C.S0, symbolSize: 4 }, { name: 'S1 100 % by 2030', type: 'line', data: S(1, 'ze_share_pct'), color: C.S1, symbolSize: 4 }] }));
-  ec('v4b').setOption(Object.assign({}, base, { yAxis: Object.assign({ type: 'value' }, axisDark), series: [['S0 BEV', 0, 'n_bev', '#8b93a7'], ['S0 CNG', 0, 'n_cng', '#4a4436'], ['S1 BEV', 1, 'n_bev', C.S1], ['S1 CNG', 1, 'n_cng', '#6b3a36']].map(([n, s, k, c]) => ({ name: n, type: 'bar', stack: 's' + s, data: S(s, k), itemStyle: { color: c } })) }));
+  ec('v4b').setOption(Object.assign({}, base, { yAxis: Object.assign({ type: 'value' }, axisDark), series: [['S0 BEV', 0, 'n_bev', '#A3A29D'], ['S0 CNG', 0, 'n_cng', '#E9E2D3'], ['S1 BEV', 1, 'n_bev', C.S1], ['S1 CNG', 1, 'n_cng', '#EBC7C3']].map(([n, s, k, c]) => ({ name: n, type: 'bar', stack: 's' + s, data: S(s, k), itemStyle: { color: c } })) }));
   ec('v4c').setOption(Object.assign({}, base, { yAxis: Object.assign({ type: 'value' }, axisDark), series: [{ name: 'S0', type: 'bar', data: S(0, 'capex_meur', 1), color: C.S0 }, { name: 'S1', type: 'bar', data: S(1, 'capex_meur', 1), color: C.S1 }] }));
   ec('v4d').setOption(Object.assign({}, base, { yAxis: Object.assign({ type: 'value' }, axisDark), series: [{ name: 'S0 emitted', type: 'line', data: S(0, 'co2_t', 1e-3), color: C.S0, symbol: 'none' }, { name: 'S1 emitted', type: 'line', data: S(1, 'co2_t', 1e-3), color: C.S1, symbol: 'none' },
     { name: 'S0 avoided', type: 'line', data: S(0, 'co2_avoided_t', 1e-3), color: C.S0, lineStyle: { type: 'dashed' }, symbol: 'none' }, { name: 'S1 avoided', type: 'line', data: S(1, 'co2_avoided_t', 1e-3), color: C.S1, lineStyle: { type: 'dashed' }, symbol: 'none' }] }));
@@ -443,14 +445,14 @@ renderCities();
    BRIEF VIEW (iii) — all five cities, File 1
    ========================================================= */
 (function () {
-  const cs = D.f1.map(r => r.city), col = c => c === 'Madrid' ? C.mad : '#5b6b8c';
+  const cs = D.f1.map(r => r.city), col = c => c === 'Madrid' ? C.mad : '#A3A29D';
   const base = { textStyle: EC_TEXT, tooltip: Object.assign({ trigger: 'axis' }, tipDark) };
   ec('v3a').setOption(Object.assign({}, base, { grid: { left: 70, right: 54, top: 6, bottom: 20 }, xAxis: Object.assign({ type: 'value', max: 100 }, axisDark), yAxis: Object.assign({ type: 'category', data: cs, inverse: true }, axisDark),
-    series: [{ type: 'bar', data: D.f1.map(r => ({ value: r.ze_share_pct, itemStyle: { color: col(r.city) } })), label: { show: true, position: 'right', color: '#dfe6f3', fontSize: 11, formatter: p => `${p.value}% (${D.f1[p.dataIndex].ze_target_year || 'no target'})` } }] }));
+    series: [{ type: 'bar', data: D.f1.map(r => ({ value: r.ze_share_pct, itemStyle: { color: col(r.city) } })), label: { show: true, position: 'right', color: '#18181B', fontSize: 11, formatter: p => `${p.value}% (${D.f1[p.dataIndex].ze_target_year || 'no target'})` } }] }));
   ec('v3b').setOption(Object.assign({}, base, { grid: { left: 46, right: 50, top: 22, bottom: 40 }, legend: { bottom: 0, textStyle: { color: C.mute, fontSize: 10.5 }, itemWidth: 10 }, xAxis: Object.assign({ type: 'category', data: cs }, axisDark),
     yAxis: [Object.assign({ type: 'value', name: 'buses', nameTextStyle: { color: C.mute, fontSize: 10 } }, axisDark), Object.assign({ type: 'value', name: 'k km', nameTextStyle: { color: C.mute, fontSize: 10 } }, axisDark, { splitLine: { show: false } })],
     series: [{ name: 'Fleet', type: 'bar', data: D.f1.map(r => ({ value: r.fleet_total, itemStyle: { color: col(r.city) } })) }, { name: 'Weekday bus-km (k)', type: 'line', yAxisIndex: 1, data: D.f1.map(r => Math.round(r.daily_bus_km / 1000)), color: C.bev }] }));
-  ec('v3c').setOption(Object.assign({}, base, { grid: { left: 46, right: 46, top: 22, bottom: 40 }, legend: { bottom: 0, textStyle: { color: C.mute, fontSize: 10.5 }, itemWidth: 10 }, xAxis: Object.assign({ type: 'category', data: cs }, axisDark),
+  ec('v3c').setOption(Object.assign({}, base, { grid: { left: 46, right: 46, top: 42, bottom: 40 }, legend: { bottom: 0, textStyle: { color: C.mute, fontSize: 10.5 }, itemWidth: 10 }, xAxis: Object.assign({ type: 'category', data: cs }, axisDark),
     yAxis: [Object.assign({ type: 'log', name: 'MWh/d', nameTextStyle: { color: C.mute, fontSize: 10 } }, axisDark), Object.assign({ type: 'value', name: 'g/kWh', nameTextStyle: { color: C.mute, fontSize: 10 } }, axisDark, { splitLine: { show: false } })],
     series: [{ name: 'Full-BEV energy MWh/day', type: 'bar', data: D.f1.map(r => ({ value: Math.round(r.energy_full_bev_mwh_day), itemStyle: { color: col(r.city) } })) }, { name: 'Grid g CO₂/kWh', type: 'scatter', yAxisIndex: 1, symbolSize: 11, data: D.f1.map(r => r.grid_co2_g_kwh), color: C.cng }] }));
 })();
@@ -474,26 +476,26 @@ function renderLab() {
   labDep.setOption({ textStyle: EC_TEXT, grid: { left: 34, right: 40, top: 24, bottom: 28 }, tooltip: Object.assign({ trigger: 'axis', valueFormatter: v => v.toFixed(2) + '×' }, tipDark),
     xAxis: Object.assign({ type: 'category', data: rows.map(r => r.name) }, axisDark), yAxis: Object.assign({ type: 'value', max: 3 }, axisDark),
     series: [{ type: 'bar', data: rows.map(r => ({ value: +r.ratio.toFixed(2), itemStyle: { color: RC[readiness(r.ratio)], decal: r.est ? { symbol: 'none', dashArrayX: [1, 0], dashArrayY: [2, 4], rotation: -0.785, color: 'rgba(255,255,255,.35)' } : null } })),
-      label: { show: true, position: 'top', color: '#fff', fontWeight: 800, formatter: p => p.value.toFixed(2) + '×' },
-      markLine: { silent: true, symbol: 'none', data: [{ yAxis: 1, label: { formatter: '1.0×', color: '#6fe0a6', position: 'end' }, lineStyle: { color: '#6fe0a6', type: 'dashed' } }, { yAxis: 1.5, label: { formatter: '1.5×', color: '#ff8a80', position: 'end' }, lineStyle: { color: '#ff8a80', type: 'dashed' } }] } }] }, true);
+      label: { show: true, position: 'top', color: '#18181B', fontWeight: 800, formatter: p => p.value.toFixed(2) + '×' },
+      markLine: { silent: true, symbol: 'none', data: [{ yAxis: 1, label: { formatter: '1.0×', color: '#2E8B57', position: 'end' }, lineStyle: { color: '#2E8B57', type: 'dashed' } }, { yAxis: 1.5, label: { formatter: '1.5×', color: '#C8372D', position: 'end' }, lineStyle: { color: '#C8372D', type: 'dashed' } }] } }] }, true);
   labPace.setOption({ textStyle: EC_TEXT, grid: { left: 44, right: 14, top: 34, bottom: 46 }, legend: { bottom: 0, textStyle: { color: C.mute, fontSize: 11 }, itemWidth: 12 }, tooltip: Object.assign({ trigger: 'axis' }, tipDark),
     xAxis: Object.assign({ type: 'category', data: PACES.map(p => p + '/yr') }, axisDark), yAxis: Object.assign({ type: 'value', max: 200 }, axisDark),
-    graphic: [{ type: 'text', left: 46, top: 4, style: { text: 'M€ · label = year S3 reaches 100 %', fill: '#7d8aa3', font: '500 11px Roboto' } }],
-    series: [{ name: 'Peak annual capex', type: 'bar', data: PACES.map(p => ({ value: D.site.sens.pace[p].peak_capex, itemStyle: { color: p === lab.pace ? C.bev : '#2b3a5c' } })),
-      label: { show: true, position: 'top', color: '#dfe6f3', fontSize: 10.5, fontWeight: 700, formatter: p => { const y = D.site.sens.pace[PACES[p.dataIndex]].year100; return y ? String(y) : '>2040'; } } },
-      { name: 'Stranded CNG value', type: 'bar', data: PACES.map(p => ({ value: D.site.sens.pace[p].stranded, itemStyle: { color: p === lab.pace ? C.cng : '#4a4436' } })) }] }, true);
+    graphic: [{ type: 'text', left: 46, top: 4, style: { text: 'M€ · label = year S3 reaches 100 %', fill: '#7d8aa3', font: '400 11px Geist' } }],
+    series: [{ name: 'Peak annual capex', type: 'bar', data: PACES.map(p => ({ value: D.site.sens.pace[p].peak_capex, itemStyle: { color: p === lab.pace ? C.bev : '#D6D4CE' } })),
+      label: { show: true, position: 'top', color: '#18181B', fontSize: 10.5, fontWeight: 700, formatter: p => { const y = D.site.sens.pace[PACES[p.dataIndex]].year100; return y ? String(y) : '>2040'; } } },
+      { name: 'Stranded CNG value', type: 'bar', data: PACES.map(p => ({ value: D.site.sens.pace[p].stranded, itemStyle: { color: p === lab.pace ? C.cng : '#E9E2D3' } })) }] }, true);
   const er = D.site.sens.elipa[lab.elipa].ratio, base = D.site.sens.elipa[2029].ratio, ys = YEARS.map(String);
   labElipa.setOption({ textStyle: EC_TEXT, grid: { left: 40, right: 14, top: 20, bottom: 46 }, legend: { bottom: 0, textStyle: { color: C.mute, fontSize: 11 }, itemWidth: 12 }, tooltip: Object.assign({ trigger: 'axis', valueFormatter: v => v == null ? 'closed' : v.toFixed(2) + '×' }, tipDark),
     xAxis: Object.assign({ type: 'category', data: ys }, axisDark), yAxis: Object.assign({ type: 'value', max: 1.6 }, axisDark),
     series: [{ name: `Fuencarral (opens ${lab.elipa})`, type: 'line', data: er.Fuencarral, lineStyle: { color: DCOL.Fuencarral, width: 3 }, itemStyle: { color: DCOL.Fuencarral },
-      markLine: { silent: true, symbol: 'none', data: [{ yAxis: 1, label: { formatter: 'limit 1.0×', color: '#dfe6f3', position: 'insideEndTop' }, lineStyle: { color: '#dfe6f3', type: 'dashed' } }] } },
+      markLine: { silent: true, symbol: 'none', data: [{ yAxis: 1, label: { formatter: 'limit 1.0×', color: '#18181B', position: 'insideEndTop' }, lineStyle: { color: '#18181B', type: 'dashed' } }] } },
       { name: 'Fuencarral (opens 2029)', type: 'line', data: base.Fuencarral, lineStyle: { color: DCOL.Fuencarral, width: 1, type: 'dotted', opacity: .6 }, itemStyle: { color: DCOL.Fuencarral }, symbol: 'none' },
       { name: 'La Elipa', type: 'line', data: er['La Elipa'], lineStyle: { color: DCOL['La Elipa'], width: 3 }, itemStyle: { color: DCOL['La Elipa'] } }] }, true);
   const a = D.site.sens_readiness[+$('#sAlloc').value];
-  $('#labAlloc').innerHTML = `<table class="reg" style="color:#dfe6f3"><tbody>${DEPOTS.map(d => { const v = a[d] || ''; const k = (v.split(' ')[0] || ''); return `<tr><td style="border-color:#22304f">${d}</td><td style="border-color:#22304f;text-align:right"><span class="rd ${k}">${v}</span></td></tr>`; }).join('')}
-    <tr><td style="border-color:#22304f"><b>MW short</b></td><td style="border-color:#22304f;text-align:right"><b>${a['MW short']}</b></td></tr></tbody></table>`;
+  $('#labAlloc').innerHTML = `<table class="reg" style="color:var(--ink)"><tbody>${DEPOTS.map(d => { const v = a[d] || ''; const k = (v.split(' ')[0] || ''); return `<tr><td style="border-color:var(--rule)">${d}</td><td style="border-color:var(--rule);text-align:right"><span class="rd ${k}">${v}</span></td></tr>`; }).join('')}
+    <tr><td style="border-color:var(--rule)"><b>MW short</b></td><td style="border-color:var(--rule);text-align:right"><b>${a['MW short']}</b></td></tr></tbody></table>`;
   const r2 = D.site.sens_rule2[+$('#sRule').value];
-  $('#labRule').innerHTML = `<div style="font:800 26px Inter;color:#fff">${r2.lines_over_range} lines <span style="font-size:14px;color:#8d9ab5;font-weight:600">over range</span></div><div class="muted" style="font-size:13px">${r2.Opportunity} opportunity · ${r2.Not_feasible} not feasible${r2.peak_buses_on_those_lines ? ' · ' + fmt(r2.peak_buses_on_those_lines) + ' peak buses on them' : ''}</div>`;
+  $('#labRule').innerHTML = `<div style="font:300 30px var(--sans)">${r2.lines_over_range} lines <span style="font-size:14px;color:var(--muted);font-weight:600">over range</span></div><div class="muted" style="font-size:13px">${r2.Opportunity} opportunity · ${r2.Not_feasible} not feasible${r2.peak_buses_on_those_lines ? ' · ' + fmt(r2.peak_buses_on_those_lines) + ' peak buses on them' : ''}</div>`;
 }
 $('#sWinR').oninput = e => { lab.win = +e.target.value; renderLab(); };
 $('#sEstR').oninput = e => { lab.est = +e.target.value; renderLab(); };
